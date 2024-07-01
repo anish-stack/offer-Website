@@ -1,8 +1,8 @@
 const express = require('express');
-const { createPartner,verifyOtpAndEmail,resendAccountVerifyOtp,resendForgetPasswordOtp,login,logout,verifyForgetPasswordOtp,deletePartnerAccount,forgetPasswordRequest} = require('../controllers/Partnercontroller');
+const { createPartner, verifyOtpAndEmail, resendAccountVerifyOtp, resendForgetPasswordOtp, login, logout, verifyForgetPasswordOtp, deletePartnerAccount, forgetPasswordRequest } = require('../controllers/Partnercontroller');
 const multer = require('multer');
 const { protect } = require('../middlewares/Protect');
-const { CreateListing } = require('../controllers/ListingControllers');
+const { CreateListing, getAllListing, getListingById, deleteListingById, deleteAllListings } = require('../controllers/ListingControllers');
 const router = express.Router();
 const storage = multer.memoryStorage()
 const multerUploads = multer({ storage }).array('images')
@@ -20,7 +20,11 @@ router.post('/logout', logout);
 router.post('/delete-partner', deletePartnerAccount);
 
 // Partner Create and Delete And Update Listings//
-router.post('/Create-Listing', protect,multerUploads,CreateListing);
+router.post('/Create-Listing', multerUploads, CreateListing);
+router.get('/get-Listing', getAllListing);
+router.get('/get-listing/:id', getListingById);
+router.delete('/delete-listing/:id', deleteListingById);
+router.delete('/delete-all-listings', deleteAllListings);
 
 
 module.exports = router;

@@ -7,11 +7,10 @@ const Cors = require('cors')
 const ConnectDb = require('./database/Database')
 const router  = require('./routes/Routes')
 const PORT = process.env.PORT || 4255
-
-
+const axios = require('axios')
+const GOOGLE_API_KEY = 'AIzaSyAwuwFlJ9FbjzZzWEPUqQPomJ8hlXdqwqo';
 // Calling database
 ConnectDb()
-
 
 //middlewares
 app.use(cookies())

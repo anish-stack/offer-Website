@@ -17,10 +17,7 @@ const PartnerSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    PartnerShift: {
-        type: String,
-        required: true
-    },
+
     PartnerDoneListing: {
         type: Number,
         default: 0

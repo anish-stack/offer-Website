@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
+import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home/Home';
+import Header from './components/Header/Header';
+import Footer from './components/Footer/Footer';
+import About from './pages/About/About';
+import SingleListing from './components/Listings/SingleListing';
+import AllListings from './components/Listings/AllListings';
+import FreeListing from './pages/FreeListing/FreeListing';
+import Advertise from './pages/Advertise/Advertise';
+import Login from './pages/Auth/Login';
+import PartnerRegister from './pages/Auth/PartnerRegister';
+import { Toaster } from 'react-hot-toast';
+import OtpPage from './pages/Auth/OtpPage';
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <BrowserRouter>
+    <Header/>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/About' element={<About />} />
+        <Route path='/Single-Listing/:id/:name' element={<SingleListing />} />
+        <Route path='/listings' element={<AllListings />} />
+        <Route path='/Free-Listing' element={<FreeListing />} />
+        <Route path='/Advertise-With-us' element={<Advertise />} />
+        <Route path='/Partner-Login' element={<Login />} />
+        <Route path='/Register-Partner' element={<PartnerRegister />} />
+        <Route path='/Otp' element={<OtpPage />} />
+
+        
+      </Routes>
+      <Footer/>
+      <Toaster/>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

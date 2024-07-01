@@ -45,12 +45,12 @@ const ListingData = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        match: /^[0-9]{10}$/ // assuming the contact number is a 10-digit number
+        // match: /^[0-9]{10}$/ // assuming the contact number is a 10-digit number
     },
     ContactDetailsSecond: {
         type: String,
         trim: true,
-        match: /^[0-9]{10}$/ // assuming the contact number is a 10-digit number
+        // match: /^[0-9]{10}$/ // assuming the contact number is a 10-digit number
     },
     Pictures: [
         {
@@ -80,9 +80,7 @@ const ListingData = new mongoose.Schema({
         }
     ],
     PartnerId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Partner',
-        required: true
+        type:String
     }
 }, { timestamps: true });
 

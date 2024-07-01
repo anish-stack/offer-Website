@@ -5,10 +5,10 @@ const sendToken = require('../utils/SendToken')
 // Create New Partner
 exports.createPartner = async (req, res) => {
     try {
-        const { PartnerName, PartnerEmail, PartnerContactDetails, PartnerShift, Password } = req.body;
+        const { PartnerName, PartnerEmail, PartnerContactDetails, Password } = req.body;
 
         // Validate request data
-        if (!PartnerName || !PartnerEmail || !PartnerContactDetails || !PartnerShift || !Password) {
+        if (!PartnerName || !PartnerEmail || !PartnerContactDetails  || !Password) {
             return res.status(400).json({ message: 'All fields are required' });
         }
 
@@ -29,7 +29,6 @@ exports.createPartner = async (req, res) => {
             PartnerName,
             PartnerEmail,
             PartnerContactDetails,
-            PartnerShift,
             Password
         });
 
@@ -40,7 +39,7 @@ exports.createPartner = async (req, res) => {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         newPartner.AccountVerifyOtp = otp;
         newPartner.ExpireTimeOtp = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes from now
-
+        console.log(otp)
         // Save the OTP and expiration time
         await newPartner.save();
 
