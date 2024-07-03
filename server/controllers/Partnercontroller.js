@@ -1,6 +1,7 @@
 const Partner = require('../models/Partner.model');
 const sendEmail = require('../utils/SendEmail');
 const jwt = require('jsonwebtoken')
+const ListingUser = require('../models/User.model'); // Adjust the path as per your project structure
 const sendToken = require('../utils/SendToken')
 // Create New Partner
 exports.createPartner = async (req, res) => {
@@ -230,7 +231,6 @@ exports.resendForgetPasswordOtp = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
 // Forget Password OTP Verified
 exports.verifyForgetPasswordOtp = async (req, res) => {
     try {
@@ -316,5 +316,23 @@ exports.deletePartnerAccount = async (req, res) => {
         res.status(200).json({ message: 'Partner account deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+};
+
+exports.GetAllShopListByPartner = async (req, res) => {
+    try {
+        const PartnerId = req.user.id; // Assuming PartnerId is stored in req.user.id (from authentication middleware)
+
+        // Find all shops by PartnerId
+        const AllShop = await ListingUser.find({ PartnerId });
+
+        if (AllShop.length === 0) {
+            return res.status(404).json({ message: 'No shops found for this partner' });
+        }
+
+        res.status(200).json({ shops: AllShop });
+    } catch (error) {
+        console.error('Error fetching shops:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };

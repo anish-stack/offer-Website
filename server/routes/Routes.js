@@ -1,5 +1,5 @@
 const express = require('express');
-const { createPartner, verifyOtpAndEmail, resendAccountVerifyOtp, resendForgetPasswordOtp, login, logout, verifyForgetPasswordOtp, deletePartnerAccount, forgetPasswordRequest } = require('../controllers/Partnercontroller');
+const { createPartner, verifyOtpAndEmail, resendAccountVerifyOtp, resendForgetPasswordOtp, login, logout, verifyForgetPasswordOtp, deletePartnerAccount, forgetPasswordRequest, GetAllShopListByPartner } = require('../controllers/Partnercontroller');
 const multer = require('multer');
 const { protect } = require('../middlewares/Protect');
 const { CreateListing, getAllListing, getListingById, deleteListingById, deleteAllListings } = require('../controllers/ListingControllers');
@@ -27,8 +27,10 @@ router.get('/get-listing/:id', getListingById);
 router.delete('/delete-listing/:id', deleteListingById);
 router.delete('/delete-all-listings', deleteAllListings);
 // Partner Create User Shop Listing and Delete And Update Listings//
-router.post('/register-list-user',protect, ListUser);
+router.post('/register-list-user', protect, ListUser);
 router.post('/login-shop-user', LoginListUser);
+router.get('/list-of-shop-user', protect, GetAllShopListByPartner);
+
 
 
 module.exports = router;
