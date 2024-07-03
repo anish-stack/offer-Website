@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import UserRegister from './UserDashboard/UserRegister';
 import ShopLogin from './pages/Auth/ShopLogin';
+import PartnerDashboard from './pages/Partner/PartnerDashboard';
 function App() {
   const [locationDetails, setLocationDetails] = useState(null);
   const [locationPopup, setLocationPopup] = useState(false);
@@ -95,12 +96,15 @@ function App() {
         <Route path='/listings' element={<AllListings />} />
         <Route path='/Free-Listing' element={<FreeListing />} />
         <Route path='/Advertise-With-us' element={<Advertise />} />
+
+        {/* ---- Partner ----  */}
         <Route path='/Partner-Login' element={<Login />} />
         <Route path='/Register-Partner' element={<PartnerRegister />} />
         <Route path='/Otp' element={<OtpPage />} />
         <Route path='/User-register-by-Partner/:PartnerId' element={<UserRegister />} />
         <Route path='/Shop-Login' element={<ShopLogin />} />
 
+        <Route path='/Partner-Dashboard' element={<PartnerDashboard />} />
         
       </Routes>
       <Footer/>
