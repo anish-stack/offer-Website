@@ -8,7 +8,7 @@ const Header = ({ locationDetails }) => {
     const [pincodeInput, setPincodeInput] = useState('');
     const [showMenu, setShowMenu] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
-    const ShopToken  = localStorage.getItem('ShopToken')
+    const ShopToken = localStorage.getItem('ShopToken')
     const PartnerToken = localStorage.getItem('B2bToken')
     const cities = [
         'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Ahmedabad', 'Chennai', 'Kolkata', 'Surat', 'Pune', 'Jaipur',
@@ -69,7 +69,18 @@ const Header = ({ locationDetails }) => {
                         <li><Link className='text-slate-900 font-bold text-lg' to={'/Advertise-With-us'}>Advertise</Link></li>
                         <li><Link className='text-slate-900 font-bold text-lg' to={'/Free-Listing'}>Free Listing</Link></li>
                         <li><a className='text-green-400 font-bold text-lg' href="tel:7217619794">98XXXXXXXX</a></li>
-                        <li className='space-x-2'><Link className='text-slate-900 space-x-3 font-bold text-lg' to="/Partner-Login">Partner Login</Link> / <Link className='text-green-400 space-x-3 font-bold text-lg' to="/Shop-login">Shop Login</Link></li>
+                        {ShopToken ? (
+                            <li className='space-x-2'><a  className='text-slate-900 font-bold text-lg' href="/Shop-Dashboard">Shop Dashboard</a></li>
+                        ) : null}
+                        {PartnerToken ? (
+                            <li className='space-x-2'><a  className='text-slate-900 font-bold text-lg' href="/Partner-Dashboard">Partner Dashboard</a></li>
+                        ) : null}
+                        {
+                            ShopToken || PartnerToken ? (null) : (
+                                <li><Link className='text-slate-900 space-x-3 font-bold text-lg' to="/Partner-Login">Partner Login</Link> / <Link className='text-green-400 space-x-3 font-bold text-lg' to="/Shop-login">Shop Login</Link></li>
+
+                            )
+                        }
                     </ul>
                     <div className="flex items-center md:hidden">
                         <button className="text-gray-700 focus:outline-none" onClick={toggleMenu}>
@@ -137,7 +148,7 @@ const Header = ({ locationDetails }) => {
                             className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                         />
                     </div>
-               
+
 
                     <div className='w-full block md:hidden '>
                         <button
