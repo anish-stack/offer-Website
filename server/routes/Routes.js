@@ -3,6 +3,7 @@ const { createPartner, verifyOtpAndEmail, resendAccountVerifyOtp, resendForgetPa
 const multer = require('multer');
 const { protect } = require('../middlewares/Protect');
 const { CreateListing, getAllListing, getListingById, deleteListingById, deleteAllListings } = require('../controllers/ListingControllers');
+const { ListUser, LoginListUser } = require('../controllers/Listinguser.controller');
 const router = express.Router();
 const storage = multer.memoryStorage()
 const multerUploads = multer({ storage }).array('images')
@@ -25,6 +26,9 @@ router.get('/get-Listing', getAllListing);
 router.get('/get-listing/:id', getListingById);
 router.delete('/delete-listing/:id', deleteListingById);
 router.delete('/delete-all-listings', deleteAllListings);
+// Partner Create User Shop Listing and Delete And Update Listings//
+router.post('/register-list-user',protect, ListUser);
+router.post('/login-shop-user', LoginListUser);
 
 
 module.exports = router;

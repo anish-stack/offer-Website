@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-const Header = () => {
+const Header = ({ locationDetails }) => {
     const [activeTab, setActiveTab] = useState('normal');
     const [searchInput, setSearchInput] = useState('');
     const [advancedSearchInput, setAdvancedSearchInput] = useState('');
-    const [showMenu, setShowMenu] = useState(false); // State for toggling menu visibility
-    const [searchResults, setSearchResults] = useState([]); // State to store search results
-
+    const [pincodeInput, setPincodeInput] = useState('');
+    const [showMenu, setShowMenu] = useState(false);
+    const [searchResults, setSearchResults] = useState([]);
+    const ShopToken  = localStorage.getItem('ShopToken')
+    const PartnerToken = localStorage.getItem('B2bToken')
     const cities = [
         'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Ahmedabad', 'Chennai', 'Kolkata', 'Surat', 'Pune', 'Jaipur',
         'Lucknow', 'Kanpur', 'Nagpur', 'Indore', 'Thane', 'Bhopal', 'Visakhapatnam', 'Pimpri-Chinchwad', 'Patna',
@@ -22,21 +24,18 @@ const Header = () => {
     const handleSearch = () => {
         // Perform search logic based on activeTab
         if (activeTab === 'normal') {
-            // Example: Perform normal search based on searchInput
             console.log("Normal Search query:", searchInput);
             console.log("Selected City:", document.getElementById('city').value);
-            setSearchResults([]); // Reset previous results
-            // Example: fetch data and update searchResults
+            console.log("Pincode:", pincodeInput);
+            setSearchResults([]);
         } else if (activeTab === 'advanced') {
-            // Example: Perform advanced search based on advancedSearchInput and other criteria
             console.log("Advanced Search query:", advancedSearchInput);
             console.log("Selected City:", document.getElementById('city').value);
             console.log("Selected Category:", document.getElementById('category').value);
-            setSearchResults([]); // Reset previous results
-            // Example: fetch data and update searchResults
+            console.log("Pincode:", pincodeInput);
+            setSearchResults([]);
         }
     };
-
 
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
@@ -45,8 +44,17 @@ const Header = () => {
     };
 
     const toggleMenu = () => {
-        setShowMenu(!showMenu); // Toggle menu visibility
+        setShowMenu(!showMenu);
     };
+
+    useEffect(() => {
+        if (locationDetails) {
+            console.log("Location details received in Header:", locationDetails);
+            if (locationDetails.pincode) {
+                setPincodeInput(locationDetails.pincode);
+            }
+        }
+    }, [locationDetails]);
 
     return (
         <div className='w-full shadow-md'>
@@ -61,8 +69,7 @@ const Header = () => {
                         <li><Link className='text-slate-900 font-bold text-lg' to={'/Advertise-With-us'}>Advertise</Link></li>
                         <li><Link className='text-slate-900 font-bold text-lg' to={'/Free-Listing'}>Free Listing</Link></li>
                         <li><a className='text-green-400 font-bold text-lg' href="tel:7217619794">98XXXXXXXX</a></li>
-                        <li className='space-x-2'><Link className='text-slate-900 space-x-3 font-bold text-lg' to="/Partner-Login">Login</Link> / <Link className='text-green-400 space-x-3 font-bold text-lg' to="/Register-Partner">Register</Link></li>
-
+                        <li className='space-x-2'><Link className='text-slate-900 space-x-3 font-bold text-lg' to="/Partner-Login">Partner Login</Link> / <Link className='text-green-400 space-x-3 font-bold text-lg' to="/Shop-login">Shop Login</Link></li>
                     </ul>
                     <div className="flex items-center md:hidden">
                         <button className="text-gray-700 focus:outline-none" onClick={toggleMenu}>
@@ -95,14 +102,29 @@ const Header = () => {
                 </div>
             </div>
             {activeTab === 'normal' && (
-                <div className='tab-search  grid grid-cols-1 gap-3 lg:grid-cols-2 md:grid-cols-3 max-w-4xl w-full mx-auto p-3'>
+                <div className='tab-search grid grid-cols-1 gap-3 lg:grid-cols-3 md:grid-cols-3 max-w-4xl w-full mx-auto p-3'>
                     <div className='mb-4 w-full'>
                         <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='city'>Select City</label>
                         <select id='city' className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline'>
-                            {cities.map((city, index) => (
-                                <option key={index} value={city}>{city}</option>
-                            ))}
+                            {locationDetails && locationDetails.city ? (
+                                <option value={locationDetails.city}>{locationDetails.city}</option>
+                            ) : (
+                                cities.map((city, index) => (
+                                    <option key={index} value={city}>{city}</option>
+                                ))
+                            )}
                         </select>
+                    </div>
+                    <div className='mb-4 w-full'>
+                        <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='pincode'>Pincode</label>
+                        <input
+                            id='pincode'
+                            type='text'
+                            value={locationDetails && locationDetails.PinCode ? locationDetails.PinCode : ''}
+                            onChange={(e) => setPincodeInput(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                        />
                     </div>
                     <div className='mb-4 w-full'>
                         <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='search'>Type What You Want</label>
@@ -115,6 +137,8 @@ const Header = () => {
                             className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                         />
                     </div>
+               
+
                     <div className='w-full block md:hidden '>
                         <button
                             className='bg-blue-500 text-white py-2 px-4 rounded-full shadow hover:bg-blue-600 transition-all duration-300'
@@ -126,14 +150,30 @@ const Header = () => {
                 </div>
             )}
             {activeTab === 'advanced' && (
-                <div className='tab-search grid grid-cols-1 gap-3 md:grid-cols-3 max-w-4xl mx-auto p-3'>
+                <div className='tab-search grid grid-cols-1 gap-3 md:grid-cols-4 max-w-4xl mx-auto p-3'>
                     <div className='mb-4 w-full'>
                         <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='city'>Select City</label>
                         <select id='city' className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline'>
-                            {cities.map((city, index) => (
-                                <option key={index} value={city}>{city}</option>
-                            ))}
+                            {locationDetails && locationDetails.city ? (
+                                <option value={locationDetails.city}>{locationDetails.city}</option>
+                            ) : (
+                                cities.map((city, index) => (
+                                    <option key={index} value={city}>{city}</option>
+                                ))
+                            )}
                         </select>
+                    </div>
+
+                    <div className='mb-4 w-full'>
+                        <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='pincode'>Pincode</label>
+                        <input
+                            id='pincode'
+                            type='text'
+                            value={locationDetails && locationDetails.PinCode ? locationDetails.PinCode : ''}
+                            onChange={(e) => setPincodeInput(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                        />
                     </div>
                     <div className='mb-4 w-full'>
                         <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='category'>Select Categories</label>
@@ -144,7 +184,8 @@ const Header = () => {
                         </select>
                     </div>
                     <div className='mb-4 w-full'>
-                        <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='advanced-search'>Advanced Search Field</label>
+                        <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='advanced-search'> Type What You Want
+                        </label>
                         <input
                             id='advanced-search'
                             type='text'
@@ -154,6 +195,9 @@ const Header = () => {
                             className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                         />
                     </div>
+
+
+
                     <div className='w-full block md:hidden'>
                         <button
                             className='bg-green-500 text-white py-2 px-4 rounded-full shadow hover:bg-green-600 transition-all duration-300'
@@ -164,7 +208,6 @@ const Header = () => {
                     </div>
                 </div>
             )}
-            {/* Conditionally render menu items based on showMenu state */}
             {showMenu && (
                 <ul className={`md:hidden absolute menu flex flex-col items-center gap-3 ${showMenu ? 'show' : ''} `}>
                     <li><Link className='text-slate-900 font-bold text-lg' to={'/Advertise-With-us'}>Advertise</Link></li>

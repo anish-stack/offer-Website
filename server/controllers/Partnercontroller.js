@@ -104,8 +104,9 @@ exports.verifyOtpAndEmail = async (req, res) => {
             `
         };
         await sendEmail(mailOptions);
+        await sendToken(partner,res,200)
 
-        res.status(200).json({ message: 'Email verified successfully' });
+        // res.status(200).json({ message: 'Email verified successfully' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

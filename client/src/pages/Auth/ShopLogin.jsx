@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
-const Login = () => {
+const ShopLogin = () => {
   const [formData, setFormData] = useState({
-    PartnerEmail: "",
+    UserName: "",
     Password: ""
   });
 
@@ -20,14 +20,14 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:7485/api/v1/login', formData);
+      const response = await axios.post('http://localhost:7485/api/v1/login-shop-user', formData);
       // Assuming your server responds with some data upon successful login
       console.log('Login Successful:', response.data);
       const data = response.data.token
       toast.success('Login Successful');
-      localStorage.setItem('B2bToken',data)
+      localStorage.setItem('ShopToken',data)
       setFormData({
-        PartnerEmail:'',
+        UserName:'',
         Password:''
       })
       // You can redirect or perform any other action upon successful login
@@ -46,7 +46,7 @@ const Login = () => {
           alt="Your Company"
         />
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Sign in to your account
+          Sign in to Shop account
         </h2>
       </div>
 
@@ -54,16 +54,16 @@ const Login = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-              Email address
+            Username
             </label>
             <div className="mt-2">
               <input
-                id="PartnerEmail"
-                name="PartnerEmail"
-                type="PartnerEmail"
-                autoComplete="PartnerEmail"
+                id="UserName"
+                name="UserName"
+                type="UserName"
+                autoComplete="UserName"
                 required
-                value={formData.PartnerEmail}
+                value={formData.UserName}
                 onChange={handleChange}
                 className="block px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -105,15 +105,15 @@ const Login = () => {
           </div>
         </form>
 
-        <p className="mt-10 text-center text-sm text-gray-500">
+        {/* <p className="mt-10 text-center text-sm text-gray-500">
           Not a member?{' '}
           <a href="/User-register-by-Partner/7458" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
             Start Your First Post Free On Today
           </a>
-        </p>
+        </p> */}
       </div>
     </div>
   );
 };
 
-export default Login;
+export default ShopLogin;
