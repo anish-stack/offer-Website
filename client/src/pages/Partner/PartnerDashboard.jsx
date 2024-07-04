@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 const PartnerDashboard = () => {
     const [partners, setPartners] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [partnersPerPage] = useState(8);
+    const [partnersPerPage] = useState(9);
     const [showModal, setShowModal] = useState(false);
     const [selectedPartner, setSelectedPartner] = useState(null);
     const [filters, setFilters] = useState({ date: '', package: '', shopName: '' });
@@ -113,17 +113,22 @@ const PartnerDashboard = () => {
             </form>
 
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
                 {currentPartners.reverse().map(partner => (
                     <div key={partner._id} className="bg-white relative rounded-lg shadow-lg p-6 transform transition-transform hover:scale-105">
                         <h2 className="text-xl font-semibold text-gray-800">{partner.ShopName}</h2>
                         <p className="text-gray-600 mt-2">{partner.ShopCategory}</p>
                         <p className="text-gray-600">{partner.Email}</p>
                         <p className="text-gray-600">Contact: {partner.ContactNumber}</p>
+                        <p className="text-gray-600">
+                            Date: {new Date(partner.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                        </p>
+
+
                         <button
                             className={`mt-4 py-2 px-4 rounded-md text-white transition-colors ${partner.ListingPlan === 'Gold' ? 'bg-yellow-500 hover:bg-yellow-600' :
-                                    partner.ListingPlan === 'Silver' ? 'bg-green-400 hover:bg-green-500' :
-                                        'bg-green-500 hover:bg-green-600'
+                                partner.ListingPlan === 'Silver' ? 'bg-green-400 hover:bg-green-500' :
+                                    'bg-slate-800 hover:bg-slate-600'
                                 }`}
                             onClick={() => openModal(partner)}
                         >
@@ -133,7 +138,7 @@ const PartnerDashboard = () => {
                             <span
                                 className={`py-1 px-3 rounded-full text-sm font-medium text-white ${partner.ListingPlan === 'Gold' ? 'bg-yellow-500' :
                                     partner.ListingPlan === 'Silver' ? 'bg-green-400' :
-                                        'bg-green-500'
+                                        'bg-slate-800'
                                     }`}
                             >
                                 {partner.ListingPlan}
@@ -157,35 +162,33 @@ const PartnerDashboard = () => {
             </div>
 
             {showModal && selectedPartner && (
-    <div className="fixed inset-0 z-50 overflow-auto bg-gray-800 bg-opacity-75 flex items-center justify-center p-4">
-        <div
-            className={`bg-white p-8 rounded-lg max-w-2xl w-full relative border-4 ${
-                selectedPartner.ListingPlan === 'Gold' ? 'border-yellow-500' :
-                selectedPartner.ListingPlan === 'Silver' ? 'border-green-400' :
-                'border-green-500'
-            }`}
-        >
-            <h2 className="text-3xl font-semibold mb-4 text-gray-800">{selectedPartner.ShopName}</h2>
-            <p className="text-gray-600 mb-2"><strong>Category:</strong> {selectedPartner.ShopCategory}</p>
-            <p className="text-gray-600 mb-2"><strong>Email:</strong> {selectedPartner.Email}</p>
-            <p className="text-gray-600 mb-2"><strong>Contact:</strong> {selectedPartner.ContactNumber}</p>
-            <p className="text-gray-600 mb-2">
-                <strong>Address:</strong> {`${selectedPartner.ShopAddress.ShopNo}, ${selectedPartner.ShopAddress.ShopAddressStreet}, ${selectedPartner.ShopAddress.NearByLandMark}, ${selectedPartner.ShopAddress.PinCode}`}
-            </p>
-            <p className="text-gray-600 mb-2"><strong>Coordinates:</strong> {`${selectedPartner.ShopAddress.ShopLongitude}, ${selectedPartner.ShopAddress.ShopLatitude}`}</p>
-            <button
-                className={`mt-6 py-2 px-4 rounded-md text-white transition-colors ${
-                    selectedPartner.ListingPlan === 'Gold' ? 'bg-yellow-500 hover:bg-yellow-600' :
-                    selectedPartner.ListingPlan === 'Silver' ? 'bg-green-400 hover:bg-green-500' :
-                    'bg-green-500 hover:bg-green-600'
-                }`}
-                onClick={closeModal}
-            >
-                Close
-            </button>
-        </div>
-    </div>
-)}
+                <div className="fixed inset-0 z-50 overflow-auto bg-gray-800 bg-opacity-75 flex items-center justify-center p-4">
+                    <div
+                        className={`bg-white p-8 rounded-lg max-w-2xl w-full relative border-4 ${selectedPartner.ListingPlan === 'Gold' ? 'border-yellow-500' :
+                            selectedPartner.ListingPlan === 'Silver' ? 'border-green-400' :
+                                'border-orange-500'
+                            }`}
+                    >
+                        <h2 className="text-3xl font-semibold mb-4 text-gray-800">{selectedPartner.ShopName}</h2>
+                        <p className="text-gray-600 mb-2"><strong>Category:</strong> {selectedPartner.ShopCategory}</p>
+                        <p className="text-gray-600 mb-2"><strong>Email:</strong> {selectedPartner.Email}</p>
+                        <p className="text-gray-600 mb-2"><strong>Contact:</strong> {selectedPartner.ContactNumber}</p>
+                        <p className="text-gray-600 mb-2">
+                            <strong>Address:</strong> {`${selectedPartner.ShopAddress.ShopNo}, ${selectedPartner.ShopAddress.ShopAddressStreet}, ${selectedPartner.ShopAddress.NearByLandMark}, ${selectedPartner.ShopAddress.PinCode}`}
+                        </p>
+                        <p className="text-gray-600 mb-2"><strong>Coordinates:</strong> {`${selectedPartner.ShopAddress.ShopLongitude}, ${selectedPartner.ShopAddress.ShopLatitude}`}</p>
+                        <button
+                            className={`mt-6 py-2 px-4 rounded-md text-white transition-colors ${selectedPartner.ListingPlan === 'Gold' ? 'bg-yellow-500 hover:bg-yellow-600' :
+                                selectedPartner.ListingPlan === 'Silver' ? 'bg-green-400 hover:bg-green-500' :
+                                    'bg-slate-900 hover:bg-slate-600'
+                                }`}
+                            onClick={closeModal}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

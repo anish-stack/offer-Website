@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
 
 const ListingData = new mongoose.Schema({
-    Email:{
-        type: String,
-        required: true,
-        trim: true
-    },
+    
     Title: {
         type: String,
         required: true,
@@ -14,43 +10,6 @@ const ListingData = new mongoose.Schema({
     Details: {
         type: String,
         trim: true
-    },
-    Address: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    State: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    City: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    Area: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    PinCode: {
-        type: String,
-        required: true,
-        trim: true,
-        match: /^[0-9]{6}$/ 
-    },
-    ContactDetails: {
-        type: String,
-        required: true,
-        trim: true,
-        // match: /^[0-9]{10}$/ // assuming the contact number is a 10-digit number
-    },
-    ContactDetailsSecond: {
-        type: String,
-        trim: true,
-        // match: /^[0-9]{10}$/ // assuming the contact number is a 10-digit number
     },
     Pictures: [
         {
@@ -79,8 +38,10 @@ const ListingData = new mongoose.Schema({
             }
         }
     ],
-    PartnerId: {
-        type:String
+    ShopId: {
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"ListingUser",
+        required:true
     }
 }, { timestamps: true });
 

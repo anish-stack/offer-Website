@@ -70,10 +70,10 @@ const Header = ({ locationDetails }) => {
                         <li><Link className='text-slate-900 font-bold text-lg' to={'/Free-Listing'}>Free Listing</Link></li>
                         <li><a className='text-green-400 font-bold text-lg' href="tel:7217619794">98XXXXXXXX</a></li>
                         {ShopToken ? (
-                            <li className='space-x-2'><a  className='text-slate-900 font-bold text-lg' href="/Shop-Dashboard">Shop Dashboard</a></li>
+                            <li className='space-x-2'><a className='text-slate-900 font-bold text-lg' href="/Shop-Dashboard">Shop Dashboard</a></li>
                         ) : null}
                         {PartnerToken ? (
-                            <li className='space-x-2'><a  className='text-slate-900 font-bold text-lg' href="/Partner-Dashboard">Partner Dashboard</a></li>
+                            <li className='space-x-2'><a className='text-slate-900 font-bold text-lg' href="/Partner-Dashboard">Partner Dashboard</a></li>
                         ) : null}
                         {
                             ShopToken || PartnerToken ? (null) : (
@@ -113,7 +113,7 @@ const Header = ({ locationDetails }) => {
                 </div>
             </div>
             {activeTab === 'normal' && (
-                <div className='tab-search grid grid-cols-1 gap-3 lg:grid-cols-3 md:grid-cols-3 max-w-4xl w-full mx-auto p-3'>
+                <div className='tab-search grid grid-cols-1 gap-3 lg:grid-cols-3 md:grid-cols-3 max-w-5xl w-full mx-auto p-3'>
                     <div className='mb-4 w-full'>
                         <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='city'>Select City</label>
                         <select id='city' className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline'>
@@ -161,7 +161,7 @@ const Header = ({ locationDetails }) => {
                 </div>
             )}
             {activeTab === 'advanced' && (
-                <div className='tab-search grid grid-cols-1 gap-3 md:grid-cols-4 max-w-4xl mx-auto p-3'>
+                <div className='tab-search grid grid-cols-1 gap-3 md:grid-cols-4 max-w-5xl mx-auto p-3'>
                     <div className='mb-4 w-full'>
                         <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='city'>Select City</label>
                         <select id='city' className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline'>

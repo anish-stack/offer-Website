@@ -17,6 +17,8 @@ import axios from 'axios';
 import UserRegister from './UserDashboard/UserRegister';
 import ShopLogin from './pages/Auth/ShopLogin';
 import PartnerDashboard from './pages/Partner/PartnerDashboard';
+import ShopDashboard from './UserDashboard/ShopDashboard';
+import CreateListing from './UserDashboard/CreateListing';
 function App() {
   const [locationDetails, setLocationDetails] = useState(null);
   const [locationPopup, setLocationPopup] = useState(false);
@@ -103,6 +105,8 @@ function App() {
         <Route path='/Otp' element={<OtpPage />} />
         <Route path='/User-register-by-Partner/:PartnerId' element={<UserRegister />} />
         <Route path='/Shop-Login' element={<ShopLogin />} />
+        <Route path='/Shop-Dashboard' element={<ShopDashboard />} />
+        <Route path='/Shop-Dashboard/Create-Post' element={<CreateListing />} />
 
         <Route path='/Partner-Dashboard' element={<PartnerDashboard />} />
         

@@ -112,9 +112,9 @@ const UserRegister = () => {
                 }
             })
             console.log(response.data)
-            toast.success('Shop listed Successful Make Your First Post ...🥰🥰 ')
+            toast.success('Shop listed Successful Make Your First Post 🥰🥰')
             localStorage.removeItem('formData');  // Clear form data after successful submission
-            
+
         } catch (error) {
             toast.error(error.response.data.message)
             console.log('There was an error registering!', error.response);

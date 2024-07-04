@@ -4,16 +4,9 @@ import { Toaster, toast } from 'react-hot-toast';
 
 const CreateListing = () => {
     const [formData, setFormData] = useState({
-        Email: '',
+    
         Title: '',
         Details: '',
-        Address: '',
-        State: '',
-        City: '',
-        Area: '',
-        PinCode: '',
-        ContactDetails: '',
-        ContactDetailsSecond: '',
         Items: [{ itemName: '', Discount: '' }],
         Pictures: []
     });
@@ -96,7 +89,7 @@ const CreateListing = () => {
                 <h1 className="card-title text-center mb-4">Create Listing</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="row">
-                        {['Email', 'Title', 'Details', 'Address', 'State', 'City', 'Area', 'PinCode', 'ContactDetails', 'ContactDetailsSecond'].map((field, idx) => (
+                        {['Title', 'Details'].map((field, idx) => (
                             <div key={idx} className="col-md-6 mb-3">
                                 <label className="form-label">{field} <span className="text-danger">*</span></label>
                                 <input

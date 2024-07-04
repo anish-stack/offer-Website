@@ -3,7 +3,7 @@ const { createPartner, verifyOtpAndEmail, resendAccountVerifyOtp, resendForgetPa
 const multer = require('multer');
 const { protect } = require('../middlewares/Protect');
 const { CreateListing, getAllListing, getListingById, deleteListingById, deleteAllListings } = require('../controllers/ListingControllers');
-const { ListUser, LoginListUser } = require('../controllers/Listinguser.controller');
+const { ListUser, LoginListUser, MyShopDetails, CreatePost, getAllPost, getPostById, deletePostById, deleteAllPost } = require('../controllers/Listinguser.controller');
 const router = express.Router();
 const storage = multer.memoryStorage()
 const multerUploads = multer({ storage }).array('images')
@@ -22,14 +22,18 @@ router.post('/delete-partner', deletePartnerAccount);
 
 // Partner Create and Delete And Update Listings//
 router.post('/Create-Listing', multerUploads, CreateListing);
-router.get('/get-Listing', getAllListing);
-router.get('/get-listing/:id', getListingById);
-router.delete('/delete-listing/:id', deleteListingById);
-router.delete('/delete-all-listings', deleteAllListings);
+router.post('/Create-Post',protect,multerUploads, CreatePost);
+
+router.get('/get-Listing', getAllPost);
+router.get('/get-listing/:id', getPostById);
+router.delete('/delete-listing/:id', deletePostById);
+router.delete('/delete-all-listings', deleteAllPost);
 // Partner Create User Shop Listing and Delete And Update Listings//
 router.post('/register-list-user', protect, ListUser);
 router.post('/login-shop-user', LoginListUser);
 router.get('/list-of-shop-user', protect, GetAllShopListByPartner);
+router.get('/My-Shop-Details', protect, MyShopDetails);
+
 
 
 

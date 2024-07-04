@@ -11,6 +11,7 @@ const SingleListing = () => {
         try {
             const response = await axios.get(`http://localhost:7485/api/v1/get-listing/${id}`);
             const data = response.data.data;
+            // console.log(data)
             setListing(data);
         } catch (error) {
             console.log(error);
@@ -18,6 +19,10 @@ const SingleListing = () => {
     };
 
     useEffect(() => {
+        // window.scrollTo({
+        //     top: 0,
+        //     behavior: "smooth"
+        // })
         fetchSingleData();
     }, [id]);
 
@@ -43,48 +48,87 @@ const SingleListing = () => {
             </nav>
 
             <h1 className="text-4xl font-bold mb-8 text-center">{listing.Title}</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div className="grid grid-cols-1 gap-2">
-                    <img src={listing.Pictures[0].ImageUrl} alt={listing.Title} className='w-full h-80 object-contain rounded-lg shadow-lg' />
+
+
+            <div className="max-w-screen-xl mx-auto p-4">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+                    <div className="lg:col-span-4">
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div className="grid grid-cols-1 gap-2">
+                                <img
+                                    src={listing.Pictures[0].ImageUrl}
+                                    alt={listing.Title}
+                                    className="w-full  object-contain rounded-lg shadow-lg"
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                                {listing.Pictures.slice(1).map((pic, index) => (
+                                    <img
+                                        key={index}
+                                        src={pic.ImageUrl}
+                                        alt={listing.Title}
+                                        className="w-full object-cover rounded-lg shadow-lg"
+                                    />
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+                            <h2 className="text-3xl font-semibold mb-4">Details</h2>
+                            <p className="text-gray-700 mb-4">{listing.Details}</p>
+                            <h3 className="text-2xl font-semibold mt-6">Address</h3>
+                            <p className="text-gray-700">{listing.Address}</p>
+                            <p className="text-gray-700">{listing.City}, {listing.State}, {listing.PinCode}</p>
+                        </div>
+                        
+
+                        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+                            <h2 className="text-3xl font-semibold mb-4 text-gray-800">Items</h2>
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+                                    <thead className="bg-gray-100">
+                                        <tr className="text-left">
+                                            <th className="py-3 px-6 border-b border-gray-200 font-semibold text-gray-700">Item</th>
+                                            <th className="py-3 px-6 border-b border-gray-200 font-semibold text-gray-700">Discount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {listing.Items.map((item, index) => (
+                                            <tr key={index} className="hover:bg-gray-50 transition duration-150">
+                                                <td className="py-4 px-6 border-b border-gray-200">{item.itemName}</td>
+                                                <td className="py-4 px-6 border-b border-gray-200">{item.Discount}%</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    {/* Advertisment Grid  */}
+                    <div className="lg:col-span-1">
+                        <div className="sticky top-4">
+                            <div className="w-full max-h-[60vh] lg:h-auto bg-gray-100 p-4 rounded-lg shadow-lg overflow-y-auto">
+                                <h3 className="text-xl font-semibold text-gray-800 mb-4">Advertisement</h3>
+                                <p className="text-gray-600 mb-4">Place your ad content here. This section occupies a maximum of 60% of the screen height.</p>
+                                <button className="bg-blue-500 w-full text-white px-4 py-2 rounded-md hover:bg-blue-600">Contact Us</button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                    {listing.Pictures.slice(1).map((pic, index) => (
-                        <img key={index} src={pic.ImageUrl} alt={listing.Title} className='w-full h-40 object-contain rounded-lg shadow-lg' />
-                    ))}
-                </div>
             </div>
-            <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h2 className="text-3xl font-semibold mb-4">Details</h2>
-                <p className="text-gray-700 mb-4">{listing.Details}</p>
-                <h3 className="text-2xl font-semibold mt-6">Address</h3>
-                <p className="text-gray-700">{listing.Address}</p>
-                <p className="text-gray-700">{listing.City}, {listing.State}, {listing.PinCode}</p>
-            </div>
-            <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h2 className="text-3xl font-semibold mb-4">Items</h2>
-                <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
-                    <thead className="bg-gray-100 text-start">
-                        <tr className='text-start'>
-                            <th className="py-2 text-start px-4 border-b">Item</th>
-                            <th className="py-2 text-start px-4 border-b">Discount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {listing.Items.map((item, index) => (
-                            <tr key={index} className="hover:bg-gray-50 transition duration-150">
-                                <td className="py-2 px-4 border-b">{item.itemName}</td>
-                                <td className="py-2 px-4 border-b">{item.Discount}%</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+
+            {/* Contact Button */}
             <div className="flex justify-center">
-                <button className='bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white py-2 px-6 rounded-full shadow-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400'>
-                    Contact
+                <button className='text-lg bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 text-white py-3 px-10 rounded-full shadow-md transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400'>
+                    Contact Now
                 </button>
             </div>
-            <AllListings/>
+            <AllListings />
         </div>
     );
 };
