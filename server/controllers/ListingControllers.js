@@ -12,24 +12,47 @@ Cloudinary.config({
 
 exports.CreateListing = async (req, res) => {
     try {
-        const partnerId = req.user || "125";
-        let { Email, Title, Details, Address, State, City, Area, PinCode, ContactDetails, ContactDetailsSecond } = req.body;
-        const files = req.files;
+        console.log("i am hit")
+        const ShopId = req.user.id;
+        const CoverImages = req.files['images'];
+        const itemsImages = req.body['Items'];
+        console.log("Items",itemsImages)
+        console.log("CoverImages",CoverImages)
+        if (!ShopId) {
+            return res.status(401).json({
+                success: false,
+                msg: "Please Login"
+            });
+        }
+
+        const CheckMyShop = await ListingUser.findById(ShopId).select('-Password');
+        const { ListingPlan, HowMuchOfferPost } = CheckMyShop;
+        const planLimits = {
+            Free: 1,
+            Silver: 5,
+            Gold: 10
+        };
+
+        if (HowMuchOfferPost >= planLimits[ListingPlan]) {
+            return res.status(403).json({
+                success: false,
+                msg: `You have reached the post limit for your ${ListingPlan} plan. Please upgrade your plan.`
+            });
+        }
+
+        const { Title, Details } = req.body;
+
         const Items = [];
         for (let i = 0; req.body[`Items[${i}].itemName`] !== undefined; i++) {
             Items.push({
                 itemName: req.body[`Items[${i}].itemName`],
-                Discount: req.body[`Items[${i}].Discount`],
+                Discount: req.body[`Items[${i}].Discount`]
             });
         }
+
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ success: false, errors: errors.array() });
-        }
-
-        const existingListing = await Listing.findOne({ $or: [{ ContactDetails }, { Email }] });
-        if (existingListing) {
-            return res.status(400).json({ success: false, message: 'Contact number or Email already in use' });
         }
 
         const uploadImage = (file) => {
@@ -45,37 +68,39 @@ exports.CreateListing = async (req, res) => {
             });
         };
 
-        const uploadedImages = await Promise.all(files.map(file => uploadImage(file)));
+        const images = req.files['images'] || [];
+        const dishImages = req.files['dishImages'] || [];
 
-        const newListing = new Listing({
-            Email,
-            Title,
-            Details,
-            Address,
-            State,
-            City,
-            Area,
-            PinCode,
-            ContactDetails,
-            ContactDetailsSecond,
-            Pictures: uploadedImages,
-            Items,
-            PartnerId: partnerId || "12365441"
+        const uploadedImages = await Promise.all(images.map(file => uploadImage(file)));
+        const uploadedDishImages = await Promise.all(dishImages.map(file => uploadImage(file)));
+
+        uploadedDishImages.forEach((upload, index) => {
+            Items[index].Image = upload.secure_url;
+            Items[index].public_id = upload.public_id;
         });
 
-        await newListing.save();
+        const newPost = await Listing.create({
+            Title,
+            Details,
+            Items,
+            Pictures: uploadedImages,
+            ShopId
+        });
 
-        const mailOptions = {
-            email: 'recipient@example.com', // Replace with actual recipient email
-            subject: 'New Listing Created',
-            message: `A new listing titled "${Title}" has been created successfully.`
-        };
-        await sendEmail(mailOptions);
+        CheckMyShop.HowMuchOfferPost += 1;
+        await CheckMyShop.save();
 
-        res.status(201).json({ success: true, message: 'Listing created successfully', data: newListing });
+        res.status(201).json({
+            success: true,
+            msg: "Post created successfully",
+            post: newPost
+        });
     } catch (error) {
-        console.error('Error creating listing:', error);
-        res.status(500).json({ success: false, message: 'Internal Server Error' });
+        res.status(500).json({
+            success: false,
+            msg: "Error creating post",
+            error: error.message
+        });
     }
 };
 

@@ -1,0 +1,22 @@
+.shop-profile{
+    width: 100%;
+    height: 250px;
+    position: relative;
+    background-color: black;
+}
+.backgrounds{
+    width: 100%;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    height: 100%;
+    background-image: url('./offers.png');
+}
+.backgrounds::after{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.622);
+}

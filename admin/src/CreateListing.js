@@ -4,7 +4,7 @@ import { Toaster, toast } from 'react-hot-toast';
 
 const CreateListing = () => {
     const [formData, setFormData] = useState({
-    
+
         Title: '',
         Details: '',
         Items: [{ itemName: '', Discount: '' }],
@@ -78,7 +78,7 @@ const CreateListing = () => {
             toast.success(response.data.message);
             console.log(response.data)
         } catch (error) {
-          console.log(error)
+            console.log(error)
         }
     };
 

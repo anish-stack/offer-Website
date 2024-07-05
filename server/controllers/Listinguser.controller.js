@@ -182,6 +182,7 @@ exports.getAllListUsers = async (req, res) => {
     }
 };
 
+
 // Delete a ListingUser
 exports.DeleteListUser = async (req, res) => {
     try {
@@ -207,7 +208,7 @@ exports.MyShopDetails = async (req, res) => {
 
         // Finding the shop details based on the user ID
         const CheckMyShop = await ListingUser.findById(MyShop).select('-Password');
-        console.log('Shop Details:', CheckMyShop);
+        // console.log('Shop Details:', CheckMyShop);
 
         if (!CheckMyShop) {
             return res.status(404).json({ message: 'Shop not found' });
@@ -239,7 +240,7 @@ exports.CreatePost = async (req, res) => {
         const planLimits = {
             Free: 1,
             Silver: 5,
-            Gold: 15
+            Gold: 10
         };
 
         if (HowMuchOfferPost >= planLimits[ListingPlan]) {
@@ -250,49 +251,64 @@ exports.CreatePost = async (req, res) => {
         }
 
         const { Title, Details } = req.body;
-        const files = req.files;
         const Items = [];
 
-        for (let i = 0; req.body[`Items[${i}].itemName`] !== undefined; i++) {
-            Items.push({
-                itemName: req.body[`Items[${i}].itemName`],
-                Discount: req.body[`Items[${i}].Discount`],
-            });
-        }
+        // Process Items and their dishImages
+        const itemsMap = {};
+        req.files.forEach(file => {
+            const match = file.fieldname.match(/Items\[(\d+)\]\.dishImages\[(\d+)\]/);
+            if (match) {
+                const [_, itemIndex, imageIndex] = match;
+                if (!itemsMap[itemIndex]) {
+                    itemsMap[itemIndex] = { dishImages: [] };
+                }
+                itemsMap[itemIndex].dishImages.push(file);
+            }
+        });
 
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ success: false, errors: errors.array() });
-        }
-
-        const uploadImage = (file) => {
+        // Upload images to Cloudinary
+        const uploadToCloudinary = async (file) => {
             return new Promise((resolve, reject) => {
-                const stream = Cloudinary.uploader.upload_stream((error, result) => {
-                    if (result) {
-                        resolve({ public_id: result.public_id, ImageUrl: result.secure_url });
-                    } else {
+                Cloudinary.uploader.upload_stream({
+                    folder: 'your_upload_folder' // Adjust folder as per your setup
+                }, (error, result) => {
+                    if (error) {
                         reject(error);
+                    } else {
+                        resolve({ public_id: result.public_id, ImageUrl: result.secure_url });
                     }
-                });
-                stream.end(file.buffer);
+                }).end(file.buffer);
             });
         };
 
-        const uploadedImages = await Promise.all(files.map(file => uploadImage(file)));
+        // Process items with dishImages
+        for (const index of Object.keys(itemsMap)) {
+            const item = itemsMap[index];
+            const uploadedImages = await Promise.all(item.dishImages.map(file => uploadToCloudinary(file)));
+            Items.push({
+                itemName: req.body[`Items[${index}].itemName`],
+                MrpPrice: req.body[`Items[${index}].MrpPrice`],
+                Discount: req.body[`Items[${index}].Discount`],
+                dishImages: uploadedImages
+            });
+        }
 
-        // Assuming Listing.create is the way you create a new post
+        // Process general images
+        const uploadedGeneralImages = await Promise.all(req.files
+            .filter(file => file.fieldname === 'images')
+            .map(file => uploadToCloudinary(file)));
+
         const newPost = await Listing.create({
             Title,
             Details,
             Items,
-            Pictures: uploadedImages,
+            Pictures: uploadedGeneralImages,
             ShopId,
-            // other necessary fields
         });
 
         CheckMyShop.HowMuchOfferPost += 1;
         await CheckMyShop.save();
-
+        console.log(newPost)
         res.status(201).json({
             success: true,
             msg: "Post created successfully",
@@ -306,6 +322,7 @@ exports.CreatePost = async (req, res) => {
         });
     }
 };
+
 
 exports.getAllPost = async (req, res) => {
     try {
@@ -327,7 +344,7 @@ exports.getAllPost = async (req, res) => {
                 };
             })
         );
-        console.log(listingsWithShopDetails)
+        // console.log(listingsWithShopDetails)
         return res.status(200).json({
             success: true,
             count: listingsWithShopDetails.length,
@@ -399,9 +416,80 @@ exports.getPostById = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Listing not found' });
         }
 
-        res.status(200).json({ success: true, data: listing });
+        const shopDetails = await ListingUser.findById(listing.ShopId).select('-password');
+
+        if (!shopDetails) {
+            return res.status(404).json({ success: false, message: 'Shop details not found' });
+        }
+
+        // Combine listing data with shopDetails
+        const listingWithShopDetails = {
+            ...listing._doc,
+            shopDetails,
+        };
+
+        res.status(200).json({ success: true, data: listingWithShopDetails });
     } catch (error) {
         console.error('Error fetching listing:', error);
         res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 };
+
+exports.getMyPostOnly = async (req, res) => {
+    try {
+        const ShopId = req.user.id; // Assuming req.user.id contains the authenticated user's ShopId
+        const listings = await Listing.find({ ShopId });
+
+        if (listings.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No listings found for this shop.',
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            count: listings.length,
+            data: listings,
+        });
+
+    } catch (error) {
+        console.error('Error fetching listings:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'Server error. Could not fetch listings.',
+        });
+    }
+};
+
+
+
+
+exports.SearchByPinCodeCityAndWhatYouWant = async (req, res) => {
+    try {
+        const { PinCode, ShopCategory } = req.body.formData;
+        let query = {
+            HowMuchOfferPost: { $gt: 0 } // Ensuring only listings with HowMuchOfferPost > 0
+        };
+
+        if (PinCode && ShopCategory) {
+            query.$or = [
+                { PinCode: PinCode },
+                { ShopCategory: ShopCategory }
+            ];
+        } else if (PinCode) {
+            query.PinCode = PinCode;
+        } else if (ShopCategory) {
+            query.ShopCategory = ShopCategory;
+        }
+
+        const data = await ListingUser.find(query);
+
+        return res.json({
+            data
+        });
+    } catch (error) {
+        console.error('Error searching listings:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}

@@ -9,6 +9,7 @@ const AllListings = () => {
         try {
             const response = await axios.get(`http://localhost:7485/api/v1/get-Listing`);
             const data = response.data.data;
+            console.log(data)
             setListings(data.reverse());
         } catch (error) {
             console.log(error);
@@ -35,9 +36,22 @@ const AllListings = () => {
                     <Link to={`/Single-Listing/${item._id}/${item.Title.replace(/\s+/g, '-')}`} className='bg-white cursor-pointer rounded-lg shadow-md p-4' key={index}>
                         <img src={item.Pictures[3].ImageUrl} alt={item.Title} loading='lazy' className='w-full h-20 md:h-48 object-cover mb-4 rounded-lg' />
                         <p className='text-lg font-semibold mb-2'>{item.Title}</p>
-                        <p className='text-sm truncate text-gray-700 mb-2'>{item.Area}, <address>{item.Address}</address></p>
-                        {item.Items.length > 0 && (
-                            <div className='flex  items-center'>
+                        <p className="text-sm truncate text-gray-700 mb-2">
+                            {item.shopDetails ? (
+                                <>
+                                    {item.shopDetails.ShopAddress.NearByLandMark || "N/A"}
+                                    , <address>
+                                        {item.shopDetails.ShopAddress.PinCode || "N/A"}
+                                        ,{item.shopDetails.ShopAddress.ShopAddressStreet || "N/A"}
+
+                                    </address>
+                                </>
+                            ) : (
+                                "N/A"
+                            )}
+                        </p>              
+                                  {item.Items.length > 0 && (
+                            <div className='flex  truncate  items-center'>
                                 <span className='bg-green-500 text-white py-1  px-1 whitespace-nowrap md:px-2 rounded-full text-sm font-semibold mr-2'>
                                     {item.Items[0].Discount}% Off
                                 </span>

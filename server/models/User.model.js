@@ -10,14 +10,16 @@ const ListingUserSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide a Shop Name"]
     },
-    ContactNumber:{
-        type:String
+    ContactNumber: {
+        type: String
     },
-    Email:{
+    Email: {
         type: String,
-
     },
     ShopAddress: {
+        City: {
+            type: String,
+        },
         PinCode: {
             type: String,
             required: [true, "Please provide a PinCode"]
@@ -34,7 +36,6 @@ const ListingUserSchema = new mongoose.Schema({
             type: String,
             required: [true, "Please provide a Nearby Landmark"]
         },
-        
         ShopLongitude: {
             type: Number,
             required: [true, "Please provide Shop Longitude"]
@@ -59,15 +60,32 @@ const ListingUserSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide a Password"]
     },
+    Followers: [
+        {
+            FollowCount: {
+                type: Number,
+                default: 0
+            },
+            FollowerId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "ListingUser"
+            }
+        }
+    ],
     PasswordChangeOtp: {
         type: String
     },
-    PartnerId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Partner",
-        required:true
+    Post: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ListingData",
+    },
+    PartnerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Partner",
+        required: true
     }
 }, { timestamps: true });
+
 ListingUserSchema.pre('save', async function (next) {
     const user = this;
     if (!user.isModified('Password')) {
@@ -86,6 +104,7 @@ ListingUserSchema.pre('save', async function (next) {
 ListingUserSchema.methods.comparePassword = function (candidatePassword) {
     return bcrypt.compare(candidatePassword, this.Password);
 };
+
 const ListingUser = mongoose.model('ListingUser', ListingUserSchema);
 
 module.exports = ListingUser;

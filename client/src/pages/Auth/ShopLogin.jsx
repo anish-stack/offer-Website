@@ -30,6 +30,7 @@ const ShopLogin = () => {
         UserName:'',
         Password:''
       })
+      window.location.href="/Shop-Dashboard"
       // You can redirect or perform any other action upon successful login
     } catch (error) {
       console.error('Login Error:', error);

@@ -19,6 +19,8 @@ import ShopLogin from './pages/Auth/ShopLogin';
 import PartnerDashboard from './pages/Partner/PartnerDashboard';
 import ShopDashboard from './UserDashboard/ShopDashboard';
 import CreateListing from './UserDashboard/CreateListing';
+import SearchProduct from './pages/Search/SearchProduct';
+import ShopProfile from './pages/ShopProfiles/ShopProfile';
 function App() {
   const [locationDetails, setLocationDetails] = useState(null);
   const [locationPopup, setLocationPopup] = useState(false);
@@ -107,8 +109,10 @@ function App() {
         <Route path='/Shop-Login' element={<ShopLogin />} />
         <Route path='/Shop-Dashboard' element={<ShopDashboard />} />
         <Route path='/Shop-Dashboard/Create-Post' element={<CreateListing />} />
-
+        <Route path='/Search' element={<SearchProduct />} />
         <Route path='/Partner-Dashboard' element={<PartnerDashboard />} />
+        <Route path='/View-More-Offers/Shop-profile/:id/:ShopName' element={<ShopProfile />} />
+
         
       </Routes>
       <Footer/>

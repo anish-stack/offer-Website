@@ -30,6 +30,8 @@ const Login = () => {
         PartnerEmail:'',
         Password:''
       })
+      window.location.href="/Partner-Dashboard"
+
       // You can redirect or perform any other action upon successful login
     } catch (error) {
       console.error('Login Error:', error);

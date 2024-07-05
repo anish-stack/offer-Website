@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const ListingData = new mongoose.Schema({
-    
     Title: {
         type: String,
         required: true,
@@ -27,21 +26,34 @@ const ListingData = new mongoose.Schema({
         {
             itemName: {
                 type: String,
-                // required: true,
                 trim: true
+            },
+            MrpPrice:{
+                type: String,
             },
             Discount: {
                 type: Number,
-                // required: true,
                 min: 0,
                 max: 100 // assuming discount is a percentage between 0 and 100
-            }
+            },
+            dishImages: [
+                {
+                    public_id: {
+                        type: String,
+                        required: true
+                    },
+                    ImageUrl: {
+                        type: String,
+                        required: true
+                    }
+                }
+            ]
         }
     ],
     ShopId: {
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"ListingUser",
-        required:true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ListingUser",
+        required: true
     }
 }, { timestamps: true });
 
