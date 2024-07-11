@@ -9,8 +9,9 @@ const AllListings = () => {
         try {
             const response = await axios.get(`http://localhost:7485/api/v1/get-Listing`);
             const data = response.data.data;
-            console.log(data)
-            setListings(data.reverse());
+            const filter  = data.filter((item)=> item.isApprovedByAdmin === true)
+            // console.log(data)
+            setListings(filter.reverse());
         } catch (error) {
             console.log(error);
         }
@@ -34,7 +35,7 @@ const AllListings = () => {
             <div className='grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5'>
                 {listings.slice(0, showAll ? listings.length : 8).map((item, index) => (
                     <Link to={`/Single-Listing/${item._id}/${item.Title.replace(/\s+/g, '-')}`} className='bg-white cursor-pointer rounded-lg shadow-md p-4' key={index}>
-                        <img src={item.Pictures[3].ImageUrl} alt={item.Title} loading='lazy' className='w-full h-20 md:h-48 object-cover mb-4 rounded-lg' />
+                        <img src={item.Pictures[0].ImageUrl} alt={item.Title} loading='lazy' className='w-full h-20 md:h-48 object-cover mb-4 rounded-lg' />
                         <p className='text-lg font-semibold mb-2'>{item.Title}</p>
                         <p className="text-sm truncate text-gray-700 mb-2">
                             {item.shopDetails ? (

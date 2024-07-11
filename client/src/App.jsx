@@ -21,6 +21,11 @@ import ShopDashboard from './UserDashboard/ShopDashboard';
 import CreateListing from './UserDashboard/CreateListing';
 import SearchProduct from './pages/Search/SearchProduct';
 import ShopProfile from './pages/ShopProfiles/ShopProfile';
+import UpgradePackage from './pages/Packages/UpgradePackage';
+import ParentComponent from './pages/Packages/ParentComponent';
+import EditPost from './UserDashboard/EditPost';
+import Success from './components/Payment/Success';
+import Failed from './components/Payment/Failed';
 function App() {
   const [locationDetails, setLocationDetails] = useState(null);
   const [locationPopup, setLocationPopup] = useState(false);
@@ -112,6 +117,14 @@ function App() {
         <Route path='/Search' element={<SearchProduct />} />
         <Route path='/Partner-Dashboard' element={<PartnerDashboard />} />
         <Route path='/View-More-Offers/Shop-profile/:id/:ShopName' element={<ShopProfile />} />
+
+        <Route path='/upgrade-package/:id' element={<ParentComponent />} />
+        <Route path='/edit-post' element={<EditPost />} />
+
+        <Route path='/paymentsuccess' element={<Success />} />
+        <Route path='/payment-failed' element={<Failed />} />
+
+
 
         
       </Routes>

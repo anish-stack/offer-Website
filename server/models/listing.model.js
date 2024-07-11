@@ -50,6 +50,10 @@ const ListingData = new mongoose.Schema({
             ]
         }
     ],
+    isApprovedByAdmin:{
+        type:Boolean,
+        default:false
+    },
     ShopId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "ListingUser",

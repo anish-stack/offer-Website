@@ -22,21 +22,38 @@ const ShopLogin = () => {
     try {
       const response = await axios.post('http://localhost:7485/api/v1/login-shop-user', formData);
       // Assuming your server responds with some data upon successful login
-      console.log('Login Successful:', response.data);
-      const data = response.data.token
-      toast.success('Login Successful');
-      localStorage.setItem('ShopToken',data)
+      // console.log('Login Successful:', response.data);
+
+      const data = response.data.token;
+
+      if (response.data.login.ListingPlan === 'Free') {
+        toast.success('Login Successful');
+        localStorage.setItem('ShopToken', data);
+        window.location.href = "/Shop-Dashboard";
+      } else if (response.data.login.ListingPlan === 'Silver' || response.data.login.ListingPlan === 'Gold') {
+        // Check if payment is done
+        if (response.data.login.PaymentDone === true) {
+          toast.success('Login Successful');
+          localStorage.setItem('ShopToken', data);
+          window.location.href = "/Shop-Dashboard";
+        } else {
+          toast.error('Payment is not done.');
+        }
+      }
+
       setFormData({
-        UserName:'',
-        Password:''
-      })
-      window.location.href="/Shop-Dashboard"
-      // You can redirect or perform any other action upon successful login
+        UserName: '',
+        Password: ''
+      });
+
+      // Redirect or perform any other action upon successful login
+
     } catch (error) {
       console.error('Login Error:', error);
       toast.error('Login Failed. Please check your credentials.');
     }
   };
+
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -55,7 +72,7 @@ const ShopLogin = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-            Username
+              Username
             </label>
             <div className="mt-2">
               <input

@@ -4,7 +4,18 @@ const sendEmail = require('../utils/SendEmail');
 const sendToken = require('../utils/SendToken');
 const Listing = require('../models/listing.model');
 const Cloudinary = require('cloudinary').v2;
+const jwt = require('jsonwebtoken');
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
+const axios = require('axios')
+const Plans = require('../models/Pacakge')
 
+const Payment = require('../models/PaymentDetails')
+const instance = new Razorpay({
+    key_id: 'rzp_test_gwvXwuaK4gKsY3',
+    key_secret: 'nOcR6CCRiRYyDc87EXPzansH',
+});
+const Partner = require('../models/Partner.model')
 const { validationResult } = require('express-validator');
 Cloudinary.config({
     cloud_name: 'dsojxxhys',
@@ -13,10 +24,7 @@ Cloudinary.config({
 });
 // Create a new ListingUser
 exports.ListUser = async (req, res) => {
-
     try {
-        const PartnerId = req.user.id
-        console.log(PartnerId)
         const {
             UserName,
             Email,
@@ -29,27 +37,36 @@ exports.ListUser = async (req, res) => {
             Password
         } = req.body;
 
-        // Check if user already exists
-        let existingUserName = await ListingUser.findOne({ UserName });
-        if (existingUserName) {
-            return res.status(400).json({ message: 'Username already exists' });
+        let token = req.cookies.token || req.body.token || (req.headers.authorization ? req.headers.authorization.replace('Bearer ', '') : '');
+
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: 'Please Login to Access this',
+            });
         }
 
-        // Check if user with the same PartnerEmail exists
-        let existingEmail = await ListingUser.findOne({ Email });
-        if (existingEmail) {
-            return res.status(400).json({ message: 'Email already registered' });
+        let PartnerId;
+        try {
+            // Verify the token
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            PartnerId = decoded.id;
+        } catch (error) {
+            console.error('Error verifying token:', error);
+            PartnerId = "668f9b9daae1410bffb9e890"; // Use default PartnerId if token verification fails
         }
 
-        // Check if user with the same ContactNumber exists
-        let existingContactNumber = await ListingUser.findOne({ ContactNumber });
-        if (existingContactNumber) {
-            return res.status(400).json({ message: 'Contact number already registered' });
+        // Check if PartnerId is valid
+        const partner = await Partner.findById(PartnerId);
+        if (!partner) {
+            return res.status(404).json({ message: 'Partner not found' });
         }
 
+        // Define plan rates for payment
+        const plansRates = await Plans.find();
 
-        // Create new user instance
-        const newUser = new ListingUser({
+        // Define initial user data
+        const userData = {
             UserName,
             ShopName,
             ShopAddress,
@@ -60,17 +77,117 @@ exports.ListUser = async (req, res) => {
             Email,
             ContactNumber,
             PartnerId
-        });
+        };
+
+        // Conditionally add FreeListing for 'Free' ListingPlan
+        if (ListingPlan === 'Free') {
+            userData.FreeListing = "Free Listing";
+        }
+
+        // Create new user instance
+        const newUser = new ListingUser(userData);
 
         // Save user to database
         await newUser.save();
 
-        res.status(201).json({ message: 'User created successfully', user: newUser });
+        // Update PartnerDoneListing count for 'Free' plan
+        if (ListingPlan === 'Free') {
+            await Partner.findByIdAndUpdate(PartnerId, { $inc: { PartnerDoneListing: 1 } });
+        }
+
+        // Handle payment for 'Silver' or 'Gold' plans
+        if (ListingPlan === 'Silver' || ListingPlan === 'Gold') {
+            // Payment amount in paisa
+            const paymentAmount = plansRates.find(plan => plan.packageName === ListingPlan)?.packagePrice * 100;
+            if (!paymentAmount) {
+                return res.status(400).json({ success: false, message: 'Invalid Listing Plan' });
+            }
+
+            // Create Razorpay order
+            const options = {
+                amount: paymentAmount,
+                currency: 'INR',
+                receipt: `user_${UserName}_${Date.now()}`
+            };
+
+            const order = await instance.orders.create(options);
+            newUser.OrderId = order.id; // Save order ID to user data
+            await newUser.save();
+
+            // Return order details to client to initiate payment
+            return res.status(200).json({
+                success: true,
+                order,
+            });
+
+            // Note: After successful payment confirmation on client side, continue with user creation process
+        }
+
+        // Return success message for 'Free' plan or already handled payments
+        return res.status(201).json({ message: 'User created successfully', user: newUser });
+
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error creating user:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+exports.getAllShops = async (req, res) => {
+    try {
+        const shops = await ListingUser.find();
+        if (shops.length === 0) {
+            return res.status(404).json({ message: 'No shops found' });
+        }
+        res.status(200).json(shops);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+exports.paymentVerification = async (req, res) => {
+    try {
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
+        const body = razorpay_order_id + "|" + razorpay_payment_id;
+
+        const expectedSignature = crypto
+            .createHmac("sha256", process.env.RAZORPAY_APT_SECRET)
+            .update(body.toString())
+            .digest("hex");
+
+        const isAuthentic = expectedSignature === razorpay_signature;
+
+        if (isAuthentic) {
+            // Database logic comes here
+
+            await Payment.create({
+                razorpay_order_id,
+                razorpay_payment_id,
+                razorpay_signature,
+            });
+            const findUser = await ListingUser.findOne({ OrderId: razorpay_order_id });
+            if (findUser) {
+                findUser.PaymentDone = true;
+                await findUser.save();
+            } else {
+                console.error('User not found for the given order ID');
+            }
+            res.redirect(
+                `http://localhost:5173/paymentsuccess?reference=${razorpay_payment_id}`
+            );
+        } else {
+            res.status(400).json({
+                success: false,
+                message: 'Payment verification failed',
+            });
+        }
+    } catch (error) {
+        console.error('Error in payment verification:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Something went wrong in payment verification',
+        });
+    }
+};
 // Login a ListingUser
 exports.LoginListUser = async (req, res) => {
     try {
@@ -189,16 +306,21 @@ exports.DeleteListUser = async (req, res) => {
         const { id } = req.params;
 
         // Find user by ID and delete
-        const deletedUser = await ListingUser.findByIdAndDelete(id).select('-Password');
+        const deletedUser = await ListingUser.findByIdAndDelete(id);
+
         if (!deletedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        res.status(200).json({ message: 'User deleted successfully', user: deletedUser });
+        // Delete all posts associated with the user
+        await Listing.deleteMany({ ShopId: id });
+
+        res.status(200).json({ message: 'User and their posts deleted successfully', user: deletedUser });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 //get My Details 
 exports.MyShopDetails = async (req, res) => {
     try {
@@ -367,15 +489,31 @@ exports.deletePostById = async (req, res) => {
         if (!listing) {
             return res.status(404).json({ success: false, message: 'Listing not found' });
         }
-
+        console.log(listing)
         // Delete associated images from Cloudinary
         const deleteImage = async (public_id) => {
-            return Cloudinary.uploader.destroy(public_id);
+            try {
+                return await Cloudinary.uploader.destroy(public_id);
+            } catch (error) {
+                console.error(`Error deleting image with public_id ${public_id}:`, error);
+                // You can choose to throw an error or continue based on your needs
+                throw error;
+            }
         };
-
         await Promise.all(listing.Pictures.map(pic => deleteImage(pic.public_id)));
+        const ShopInfo = await ListingUser.findById(listing.ShopId);
 
-        await listing.remove();
+        if (!ShopInfo) {
+            return res.status(403).json({
+                success: false,
+                msg: "Shop Not Available"
+            });
+        } else {
+            ShopInfo.HowMuchOfferPost -= 1;
+            await ShopInfo.save(); // Save the updated ShopInfo
+            await listing.deleteOne(); // Delete the listing
+        }
+
         res.status(200).json({ success: true, message: 'Listing deleted successfully' });
     } catch (error) {
         console.error('Error deleting listing:', error);
@@ -493,3 +631,79 @@ exports.SearchByPinCodeCityAndWhatYouWant = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
+
+exports.showPaymentDetails = async (req, res) => {
+    try {
+        const OrderId = req.params.id; // Assuming this is the razorpay_order_id
+        const { RAZORPAY_API_KEY, RAZORPAY_API_SECRET } = process.env;
+
+        const response = await axios({
+            method: 'get',
+            url: `https://api.razorpay.com/v1/orders/${OrderId}`, // Endpoint to fetch order details
+            auth: {
+                username: "rzp_test_gwvXwuaK4gKsY3",
+                password: "nOcR6CCRiRYyDc87EXPzansH"
+            },
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const orderDetails = response.data; // Contains the order details including transaction information
+
+        return res.status(200).json({
+            success: true,
+            orderDetails
+        });
+    } catch (error) {
+        console.error('Error fetching payment details from Razorpay:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to fetch payment details from Razorpay'
+        });
+    }
+};
+
+
+exports.allPayments = async (req, res) => {
+    try {
+        // Fetch all payments from MongoDB
+        const paymentsDb = await Payment.find();
+
+        // Array to store promises for fetching Razorpay order details
+        const promises = paymentsDb.map(async (payment) => {
+            try {
+                // Fetch order details from Razorpay API
+                const response = await axios({
+                    method: 'get',
+                    url: `https://api.razorpay.com/v1/orders/${payment.razorpay_order_id}`,
+                    auth: {
+                        username: "rzp_test_gwvXwuaK4gKsY3",
+                        password: "nOcR6CCRiRYyDc87EXPzansH"
+                    },
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                // Add order details to payment object
+                const orderDetails = response.data; // Assuming Razorpay response structure
+                return { ...payment.toObject(), orderDetails }; // Combine payment and orderDetails
+            } catch (error) {
+                console.error(`Error fetching order details for order ID ${payment.razorpay_order_id}:`, error);
+                // Handle individual order fetch errors here if needed
+                return { ...payment.toObject(), orderDetailsError: error.message };
+            }
+        });
+
+        // Execute all promises concurrently
+        const updatedPayments = await Promise.all(promises);
+
+        // Respond with updated payments including order details
+        return res.status(200).json({ success: true, payments: updatedPayments });
+    } catch (error) {
+        console.error('Error fetching payments:', error);
+        return res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};

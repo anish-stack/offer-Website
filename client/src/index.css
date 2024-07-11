@@ -1,4 +1,4 @@
-svg {
+.loading svg {
     width: 3.25em;
     transform-origin: center;
     animation: rotate4 2s linear infinite;
@@ -35,4 +35,20 @@ svg {
      stroke-dashoffset: -125px;
     }
    }
-   
+   .loader {
+    border: 8px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #4f46e5;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

@@ -3,7 +3,9 @@ import React, { useEffect, useState } from 'react'
 import ShopImage from './store.png'
 import CreateListing from './CreateListing'
 import MyPost from './MyPost'
+import { Navigate, useNavigate } from 'react-router-dom'
 const ShopDashboard = () => {
+    const navigate = useNavigate()
     const token = localStorage.getItem('ShopToken')
     const [shopDetails, setShopDetails] = useState()
     const [isCreateListingOpen, setIsCreateListingOpen] = useState(false);
@@ -25,6 +27,9 @@ const ShopDashboard = () => {
     useEffect(() => {
         fetchMyShopDetails()
     }, [])
+    const handleUpgradePackage = (id) =>{
+        navigate(`/upgrade-package/${id}`)
+    }
     return (
         <div className='w-full py-3'>
             {token ? (
@@ -34,9 +39,8 @@ const ShopDashboard = () => {
                             <div className="col-span-4 sm:col-span-3">
                                 <div className="bg-white shadow rounded-lg p-6">
                                     <div className="flex flex-col items-center">
-                                        <img src={ShopImage} className="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0">
+                                        <img src={ShopImage} className="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0" /> 
 
-                                        </img>
                                         <h1 className="text-xl font-bold">{shopDetails ? shopDetails.ShopName || "N/A" : "N/A"}</h1>
                                         <p className="text-gray-700">{shopDetails ? shopDetails.ShopCategory || "N/A" : "N/A"}</p>
                                         <div className="mt-8 flex flex-wrap gap-4 justify-center">
@@ -71,12 +75,13 @@ const ShopDashboard = () => {
                                             <div className="mb-2">
                                                 <span className="font-semibold">Pin Code:</span> {shopDetails && shopDetails.ShopAddress ? shopDetails.ShopAddress.PinCode || "N/A" : "N/A"}
                                             </div>
-                                        </div>
-                                    </div>
-
-                                    <h1 className="text-4xl font-bold text-center text-gray-800 ">
-
-                                        <span className="text-sm">
+                                            <div className="mb-2 m-auto">
+                                                <button onClick={() => handleUpgradePackage(shopDetails._id)} className="text-sm  px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50">
+                                                    UPGRADE PACKAGE
+                                                </button>
+                                                
+                                            </div>
+                                            <div className="mb-2 m-auto">
                                             <button
                                                 onClick={() => {
                                                     localStorage.clear();
@@ -86,10 +91,14 @@ const ShopDashboard = () => {
                                             >
                                                 Logout
                                             </button>
-                                        </span>
-                                    </h1>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
+
                             <div className="col-span-4 overflow-hidden sm:col-span-9">
                                 <div className="bg-white relative shadow rounded-lg p-6">
                                     <div className="offer-tag">
@@ -118,7 +127,7 @@ const ShopDashboard = () => {
 
 
                                     <h2 className="text-xl  text-center font-bold mt-6 mb-4">My Post</h2>
-                                    <MyPost />
+                                    <MyPost fetchMyShopDetails={fetchMyShopDetails} />
                                 </div>
                             </div>
                         </div>
@@ -131,7 +140,7 @@ const ShopDashboard = () => {
                 </>
             )}
 
-            <CreateListing isOpen={isCreateListingOpen} onClose={() => setIsCreateListingOpen(false)} />
+            <CreateListing  isOpen={isCreateListingOpen} onClose={() => setIsCreateListingOpen(false)} />
         </div>
     )
 }

@@ -336,3 +336,43 @@ exports.GetAllShopListByPartner = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+exports.GetAllShopListByPartnerAdmin = async (req, res) => {
+    try {
+        const PartnerId = req.params.id; // Assuming PartnerId is stored in req.user.id (from authentication middleware)
+
+        // Find all shops by PartnerId
+        const AllShop = await ListingUser.find({ PartnerId });
+
+        if (AllShop.length === 0) {
+            return res.status(404).json({ message: 'No shops found for this partner' });
+        }
+
+        res.status(200).json({ shops: AllShop });
+    } catch (error) {
+        console.error('Error fetching shops:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+exports.getAllPartner = async (req,res)=>{
+    try {
+        const AllPartner = await Partner.find()
+        if(AllPartner.length === 0){
+            return res.status(403).json({
+                success:false,
+                msg:"No partner Found"
+            })
+        }
+        res.status(201).json({
+            success:true,
+            data:AllPartner,
+            msg:"Fetched Success"
+        })
+    } catch (error) {
+        res.status(201).json({
+            success:false,
+            data:error,
+            msg:"Fetched Failed"
+        })
+    }
+}

@@ -8,6 +8,13 @@ const SingleListing = () => {
     const { id } = useParams();
     const [listing, setListing] = useState(null);
 
+    useEffect(()=>{
+        window.scrollTo({
+            top:0,
+            behavior:'smooth'
+        })
+    },[id])
+
     const fetchSingleData = async () => {
         try {
             const response = await axios.get(`http://localhost:7485/api/v1/get-listing/${encodeURIComponent(id)}`);
@@ -24,7 +31,7 @@ const SingleListing = () => {
     }, [id]);
 
     if (!listing) {
-        return <div><svg viewBox="25 25 50 50">
+        return <div className='w-full min-h-screen flex items-center justify-center loading'><svg viewBox="25 25 50 50">
             <circle r="20" cy="50" cx="50"></circle>
         </svg></div>;
     }

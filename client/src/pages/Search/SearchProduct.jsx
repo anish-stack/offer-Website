@@ -86,7 +86,9 @@ const SearchProduct = () => {
 
                 {/* Search results */}
                 {loading ? (
-                    <p className="text-center">Loading...</p>
+                   <div className='w-full min-h-screen flex items-center justify-center loading'><svg viewBox="25 25 50 50">
+                   <circle r="20" cy="50" cx="50"></circle>
+               </svg></div>
                 ) : currentResults.length > 0 ? (
                     <>
                         {currentResults.map((result, index) => (

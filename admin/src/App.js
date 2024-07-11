@@ -1,12 +1,17 @@
-import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Card from './components/Card/Card';
+import Sidebar from './components/header/Header';
 import CreateListing from './CreateListing';
+import Home from './Home/Home';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
-    <div className="App">
-     <CreateListing/>
-    </div>
+    <BrowserRouter>
+      <Home/>
+      <Toaster/>
+    </BrowserRouter>
   );
 }
 

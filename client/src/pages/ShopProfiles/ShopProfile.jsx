@@ -29,7 +29,9 @@ const ShopProfile = () => {
     }, [id]);
 
     if (!shopDetails) {
-        return <div>Loading...</div>; // Add a loading state if data is being fetched
+        return <div className='w-full min-h-screen flex items-center justify-center loading'><svg viewBox="25 25 50 50">
+        <circle r="20" cy="50" cx="50"></circle>
+    </svg></div>; // Add a loading state if data is being fetched
     }
 
     return (
@@ -48,7 +50,7 @@ const ShopProfile = () => {
             <div className='max-w-7xl mx-auto '>
                 {/* <h2 className="text-3xl text-center font-semibold mb-4 text-gray-800">All Offers</h2> */}
                 <div className="grid grid-cols-1  mt-6 sm:grid-cols-2 lg:grid-cols-4 gap-6 rounded-lg  p-6 mb-8">
-                    {shopDetails && shopDetails.map((item, index) => (
+                    {shopDetails && shopDetails.reverse().map((item, index) => (
 
                         <a href={`/Single-Listing/${item._id}/${item.Title.replace(/\s+/g, '-')}`} key={index} className="bg-white border cursor-pointer rounded overflow-hidden ">
                             <img

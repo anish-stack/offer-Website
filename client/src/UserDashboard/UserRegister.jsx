@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import {toast} from 'react-hot-toast'
-// Updated list of categories
+import { toast } from 'react-hot-toast';
+
 const SHOP_CATEGORIES = [
     "Art Gallery", "Automotive Showroom", "Bakery", "Barbershop", "Beauty Salon",
     "Big-box Store", "Book Store", "Brand Flagship", "Brand Shop", "Brand Showroom",
@@ -40,9 +40,10 @@ const UserRegister = () => {
             ShopLongitude: "",
             ShopLatitude: ""
         },
+        ListingPlan: 'Free', // Default to Free plan
+        price: 0,
         ShopCategory: "",
         CustomCategory: "",  // New field for custom category
-        ListingPlan: "",
         HowMuchOfferPost: "",
         Password: "",
     });
@@ -74,6 +75,10 @@ const UserRegister = () => {
             ...prevState,
             [name]: value
         }));
+
+        if (name === 'ListingPlan') {
+            updatePrice(value);
+        }
     };
 
     const handleAddressChange = (e) => {
@@ -102,30 +107,95 @@ const UserRegister = () => {
             return newStep;
         });
     };
-    const token = localStorage.getItem('B2bToken')
-    const handleSubmit = async (el) => {
-        try {
-            el.preventDefault()
-            const response = await axios.post('http://localhost:7485/api/v1/register-list-user',formData,{
-                headers:{
-                    Authorization:`Bearer ${token} `
-                }
-            })
-            console.log(response.data)
-            toast.success('Shop listed Successful Make Your First Post 🥰🥰')
-            localStorage.removeItem('formData');  // Clear form data after successful submission
 
+    const updatePrice = (plan) => {
+        switch (plan) {
+            case 'Free':
+                price = 0;
+                break;
+            case 'Silver':
+                price = 499;
+                break;
+            case 'Gold':
+                price = 799;
+                break;
+            default:
+                price = 0;
+                break;
+        }
+        setFormData(prevState => ({
+            ...prevState,
+            ListingPlan: plan,
+            price: price
+        }));
+    };
+
+    const token = localStorage.getItem('B2bToken');
+    
+
+    const handleSubmit = async () => {
+        try {
+            const response = await axios.post('http://localhost:7485/api/v1/register-list-user', formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+    
+            console.log(response.data);
+    
+            // Check if the ListingPlan requires payment
+            if (formData.ListingPlan === 'Free') {
+                // Handle free plan registration
+                toast.success('Shop listed successfully.');
+                localStorage.removeItem('formData');  // Clear form data after successful submission
+            } else {
+                // Handle payment process for Silver or Gold plan
+                const order = response.data.order;
+    
+                const options = {
+                    key: "rzp_test_gwvXwuaK4gKsY3",
+                    amount: order?.amount || null,
+                    currency: "INR",
+                    name: "Nai Deal",
+                    description: `Payment For Plans Name ${formData.ListingPlan}`,
+                    image: "https://i.pinimg.com/originals/9e/ff/85/9eff85f9a3f9540bff61bbeffa0f6305.jpg",
+                    order_id: order?.id,
+                    callback_url: "http://localhost:7485/api/v1/paymentverification",
+                    prefill: {
+                        name: formData.UserName,
+                        email: formData.Email,
+                        contact: formData.ContactNumber
+                    },
+                    notes: {
+                        "address": "Razorpay Corporate Office"
+                    },
+                    theme: {
+                        "color": "#121212"
+                    }
+                };
+    
+                const razorpay = new window.Razorpay(options);
+                razorpay.on('payment.failed', function (response) {
+                    toast.error('Payment failed. Please try again.');
+                });
+                razorpay.open();
+            }
+    
+            toast.success('Shop listed successfully. Make your first post!');
+            localStorage.removeItem('formData');  // Clear form data after successful submission
         } catch (error) {
-            toast.error(error.response.data.message)
-            console.log('There was an error registering!', error.response);
+            toast.error('There was an error registering: ' + error.response?.data?.message || 'Unknown error');
+            console.error('There was an error registering:', error);
         }
     };
+    
+
 
     return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center">
             <div className="bg-white shadow-lg rounded-lg p-8 max-w-2xl m-4 w-full">
                 <div className="mb-4 text-center">
-                    <h1 className="text-2xl font-bold">List Your Shop in a Simple Two Step Process</h1>
+                    <h1 className="text-2xl font-bold">List Your Shop in a Simple Two-Step Process</h1>
                 </div>
                 <div className="flex justify-center mb-8">
                     <div className="flex items-center">
@@ -137,7 +207,7 @@ const UserRegister = () => {
                 {step === 1 && (
                     <div>
                         <div className="mb-4">
-                            <label className="block text-gray-700">UserName</label>
+                            <label className="block text-gray-700">Username</label>
                             <input
                                 type="text"
                                 name="UserName"
@@ -147,7 +217,7 @@ const UserRegister = () => {
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block text-gray-700">ShopName</label>
+                            <label className="block text-gray-700">Shop Name</label>
                             <input
                                 type="text"
                                 name="ShopName"
@@ -157,7 +227,7 @@ const UserRegister = () => {
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block text-gray-700">ContactNumber</label>
+                            <label className="block text-gray-700">Contact Number</label>
                             <input
                                 type="text"
                                 name="ContactNumber"
@@ -177,7 +247,7 @@ const UserRegister = () => {
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block text-gray-700">ShopCategory</label>
+                            <label className="block text-gray-700">Shop Category</label>
                             <select
                                 name="ShopCategory"
                                 value={formData.ShopCategory}
@@ -195,15 +265,18 @@ const UserRegister = () => {
                             <input
                                 type="text"
                                 name="CustomCategory"
-                                value={formData.CustomCategory || ""}
-                                onChange={(e) => {
-                                    const { value } = e.target;
-                                    setFormData(prevState => ({
-                                        ...prevState,
-                                        ShopCategory: value,
-                                        CustomCategory: value
-                                    }));
-                                }}
+                                value={formData.CustomCategory}
+                                onChange={handleInputChange}
+                                className="w-full p-2 border border-gray-300 rounded"
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-700">How Much Offers Post Per Year</label>
+                            <input
+                                type="text"
+                                name="HowMuchOfferPost"
+                                value={formData.HowMuchOfferPost}
+                                onChange={handleInputChange}
                                 className="w-full p-2 border border-gray-300 rounded"
                             />
                         </div>
@@ -220,7 +293,7 @@ const UserRegister = () => {
                         <div className="flex justify-between">
                             <button
                                 onClick={nextStep}
-                                className="px-4 py-2 bg-blue-500 text-white rounded"
+                                className="bg-blue-500 text-white px-4 py-2 rounded"
                             >
                                 Next
                             </button>
@@ -230,85 +303,77 @@ const UserRegister = () => {
                 {step === 2 && (
                     <div>
                         <div className="mb-4">
-                            <label className="block text-gray-700">Pincode</label>
+                            <label className="block text-gray-700">Shop Address</label>
+                            <input
+                                type="text"
+                                name="ShopNo"
+                                value={formData.ShopAddress.ShopNo}
+                                onChange={handleAddressChange}
+                                className="w-full p-2 border border-gray-300 rounded mb-2"
+                                placeholder="Shop Number"
+                            />
+                            <input
+                                type="text"
+                                name="ShopAddressStreet"
+                                value={formData.ShopAddress.ShopAddressStreet}
+                                onChange={handleAddressChange}
+                                className="w-full p-2 border border-gray-300 rounded mb-2"
+                                placeholder="Shop Address Street"
+                            />
+                            <input
+                                type="text"
+                                name="NearByLandMark"
+                                value={formData.ShopAddress.NearByLandMark}
+                                onChange={handleAddressChange}
+                                className="w-full p-2 border border-gray-300 rounded mb-2"
+                                placeholder="Near By LandMark"
+                            />
                             <input
                                 type="text"
                                 name="PinCode"
                                 value={formData.ShopAddress.PinCode}
                                 onChange={handleAddressChange}
                                 className="w-full p-2 border border-gray-300 rounded"
+                                placeholder="Pin Code"
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block text-gray-700">ShopNo</label>
-                            <input
-                                type="text"
-                                name="ShopNo"
-                                value={formData.ShopAddress.ShopNo}
-                                onChange={handleAddressChange}
-                                className="w-full p-2 border border-gray-300 rounded"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">ShopAddressStreet</label>
-                            <input
-                                type="text"
-                                name="ShopAddressStreet"
-                                value={formData.ShopAddress.ShopAddressStreet}
-                                onChange={handleAddressChange}
-                                className="w-full p-2 border border-gray-300 rounded"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">NearByLandMark</label>
-                            <input
-                                type="text"
-                                name="NearByLandMark"
-                                value={formData.ShopAddress.NearByLandMark}
-                                onChange={handleAddressChange}
-                                className="w-full p-2 border border-gray-300 rounded"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">ShopLongitude</label>
-                            <input
-                                type="text"
-                                name="ShopLongitude"
-                                value={formData.ShopAddress.ShopLongitude}
-                                onChange={handleAddressChange}
-                                className="w-full p-2 border border-gray-300 rounded"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">ShopLatitude</label>
-                            <input
-                                type="text"
-                                name="ShopLatitude"
-                                value={formData.ShopAddress.ShopLatitude}
-                                onChange={handleAddressChange}
-                                className="w-full p-2 border border-gray-300 rounded"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">ListingPlan</label>
-                            <input
-                                type="text"
+                            <label className="block text-gray-700">Choose Your Plan</label>
+                            <select
                                 name="ListingPlan"
                                 value={formData.ListingPlan}
                                 onChange={handleInputChange}
                                 className="w-full p-2 border border-gray-300 rounded"
+                            >
+
+                                <option value="Free">Free</option>
+                                <option value="Silver">Silver - ₹499/year</option>
+                                <option value="Gold">Gold - ₹799/year</option>
+                            </select>
+                            <div className="mt-2 text-red-700">
+                                Selected Plan: {formData.ListingPlan} - {formData.price > 0 ? `₹${formData.price}/year` : 'Free'}
+                            </div>
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-700">Price</label>
+                            <input
+                                type="text"
+                                name="price"
+                                value={formData.price}
+                                className="w-full p-2 border border-gray-300 rounded"
+
                             />
                         </div>
                         <div className="flex justify-between">
                             <button
                                 onClick={prevStep}
-                                className="px-4 py-2 rounded-3xl bg-blue-500 text-white "
+                                className="bg-gray-400 text-white px-4 py-2 rounded"
                             >
                                 Previous
                             </button>
                             <button
                                 onClick={handleSubmit}
-                                className="px-4 py-2 rounded-3xl bg-green-500 text-white "
+                                className="bg-blue-500 text-white px-4 py-2 rounded"
                             >
                                 Submit
                             </button>
@@ -317,7 +382,7 @@ const UserRegister = () => {
                 )}
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default UserRegister
+export default UserRegister;

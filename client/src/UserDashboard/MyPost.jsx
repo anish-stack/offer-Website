@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-const MyPost = () => {
+const MyPost = ({fetchMyShopDetails}) => {
     const token = localStorage.getItem('ShopToken');
     const [posts, setPosts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -32,6 +34,46 @@ const MyPost = () => {
     // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+
+    // Delete Post 
+    const handleDelete = async (id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const res = await axios.delete(`http://localhost:7485/api/v1/delete-listing/${id}`);
+                    console.log(res.data);
+                    // toast.success("Test Deleted");
+                    fetchMyPost();
+
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Your Post has been deleted.",
+                        icon: "success"
+                    });
+                    fetchMyShopDetails()
+                } catch (error) {
+                    console.error(error);
+                    // toast.error(error.response.data.message);
+                }
+            }
+        });
+    }
+
+    const EditPost = async (postDetails)=>{
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
     return (
         <div className="container mx-auto px-4 py-8">
             {/* <h1 className="text-3xl font-semibold mb-4">My Posts</h1> */}
@@ -64,6 +106,12 @@ const MyPost = () => {
                                     ))}
                                 </ul>
                             </div>
+
+                            <div className="flex space-x-4 justify-between">
+                                <button onClick={() => { handleDelete(post._id) }} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">Delete</button>
+                                <Link to={`/edit-post?id=${post._id}`} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Update</Link>
+                            </div>
+
                         </div>
                     </div>
                 ))}

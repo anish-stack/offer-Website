@@ -3,6 +3,7 @@ const Partner = require('../models/Partner.model');
 const Cloudinary = require('cloudinary').v2;
 const { validationResult } = require('express-validator');
 const sendEmail = require('../utils/SendEmail');
+const ListingUser = require('../models/User.model')
 
 Cloudinary.config({
     cloud_name: 'dsojxxhys',
@@ -16,8 +17,8 @@ exports.CreateListing = async (req, res) => {
         const ShopId = req.user.id;
         const CoverImages = req.files['images'];
         const itemsImages = req.body['Items'];
-        console.log("Items",itemsImages)
-        console.log("CoverImages",CoverImages)
+        console.log("Items", itemsImages)
+        console.log("CoverImages", CoverImages)
         if (!ShopId) {
             return res.status(401).json({
                 success: false,
@@ -103,8 +104,6 @@ exports.CreateListing = async (req, res) => {
         });
     }
 };
-
-
 exports.getAllListing = async (req, res) => {
     try {
         const listings = await Listing.find(); // Fetch all listings from the database
@@ -190,5 +189,134 @@ exports.getListingById = async (req, res) => {
     } catch (error) {
         console.error('Error fetching listing:', error);
         res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
+
+const uploadImage = (file) => {
+    return new Promise((resolve, reject) => {
+        const stream = Cloudinary.uploader.upload_stream((error, result) => {
+            if (result) {
+                resolve({ public_id: result.public_id, ImageUrl: result.secure_url });
+            } else {
+                reject(error);
+            }
+        });
+        stream.end(file.buffer);
+    });
+};
+exports.UpdateListing = async (req, res) => {
+    try {
+        const ShopId = req.user.id;
+        const ListingId = req.params.id;
+
+        if (!ShopId) {
+            return res.status(401).json({
+                success: false,
+                msg: "Please Login"
+            });
+        }
+
+        const CheckMyShop = await ListingUser.findById(ShopId).select('-Password');
+        if (!CheckMyShop) {
+            return res.status(404).json({
+                success: false,
+                msg: "Shop not found"
+            });
+        }
+
+        const { Title, Details } = req.body;
+
+        const listing = await Listing.findById(ListingId);
+        if (!listing) {
+            return res.status(404).json({
+                success: false,
+                msg: "Listing not found"
+            });
+        }
+
+        if (listing.ShopId.toString() !== ShopId) {
+            return res.status(403).json({
+                success: false,
+                msg: "Unauthorized"
+            });
+        }
+
+        const Items = [];
+        for (let i = 0; req.body[`Items[${i}].itemName`] !== undefined; i++) {
+            Items.push({
+                itemName: req.body[`Items[${i}].itemName`],
+                MrpPrice: req.body[`Items[${i}].MrpPrice`],
+                Discount: req.body[`Items[${i}].Discount`],
+                dishImages: []
+            });
+        }
+
+        console.log('Items before adding images:', Items);
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ success: false, errors: errors.array() });
+        }
+
+        const images = req.files['images'] || [];
+        const dishImagesUrl = req.files.map(file => file);
+
+        console.log('dishImagesUrl:', dishImagesUrl);
+
+        const uploadedDishImages = await Promise.all(dishImagesUrl.map(file => uploadImage(file)));
+
+        console.log('uploadedDishImages:', uploadedDishImages);
+
+        uploadedDishImages.forEach((upload, index) => {
+            if (Items[index]) {
+                Items[index].dishImages.push({
+                    public_id: upload.public_id,
+                    ImageUrl: upload.ImageUrl
+                });
+            }
+        });
+
+        const uploadedImages = await Promise.all(images.map(file => uploadImage(file)));
+
+        console.log('uploadedImages:', uploadedImages);
+
+        if (Title) listing.Title = Title;
+        if (Details) listing.Details = Details;
+        if (Items.length) listing.Items = Items;
+
+        if (uploadedImages.length) {
+            const updatedPictures = [...listing.Pictures];
+
+            uploadedImages.forEach(upload => {
+                const existingImageIndex = updatedPictures.findIndex(picture => picture.public_id === upload.public_id);
+                if (existingImageIndex !== -1) {
+                    updatedPictures[existingImageIndex] = upload;
+                } else {
+                    updatedPictures.push({
+                        public_id: upload.public_id,
+                        ImageUrl: upload.ImageUrl
+                    });
+                }
+            });
+
+            listing.Pictures = updatedPictures;
+
+            console.log('Updated Pictures:', updatedPictures);
+        }
+
+        await listing.save();
+
+        res.status(200).json({
+            success: true,
+            msg: "Listing updated successfully",
+            listing
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            msg: "Error updating listing",
+            error: error.message
+        });
     }
 };

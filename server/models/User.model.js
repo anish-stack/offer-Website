@@ -38,11 +38,11 @@ const ListingUserSchema = new mongoose.Schema({
         },
         ShopLongitude: {
             type: Number,
-            required: [true, "Please provide Shop Longitude"]
+            // required: [true, "Please provide Shop Longitude"]
         },
         ShopLatitude: {
             type: Number,
-            required: [true, "Please provide Shop Latitude"]
+            // required: [true, "Please provide Shop Latitude"]
         },
     },
     ShopCategory: {
@@ -79,11 +79,21 @@ const ListingUserSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "ListingData",
     },
+    FreeListing:{
+        type: String,
+       
+    },
+    OrderId:{
+        type: String,
+    },
+    PaymentDone:{
+        type: Boolean,
+        default:false
+    },
     PartnerId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Partner",
-        required: true
-    }
+        ref: "Partner"
+        }
 }, { timestamps: true });
 
 ListingUserSchema.pre('save', async function (next) {

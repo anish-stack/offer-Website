@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Toaster, toast } from 'react-hot-toast';
 
-const CreateListing = ({ isOpen, onClose }) => {
+const CreateListing = ({ isOpen, onClose, fetchMyShopDetails }) => {
+    const [btnLoading, setBtnLoading] = useState(false);
     const [formData, setFormData] = useState({
         Title: '',
         Details: '',
-        Items: [{ itemName: '', Discount: '', dishImages: [],MrpPrice:'' }],
+        Items: [{ itemName: '', Discount: '', dishImages: [], MrpPrice: '' }],
         Pictures: []
     });
     const [imagePreviews, setImagePreviews] = useState([]);
@@ -35,7 +36,7 @@ const CreateListing = ({ isOpen, onClose }) => {
     };
 
     const handleAddItem = () => {
-        setFormData({ ...formData, Items: [...formData.Items, { itemName: '', Discount: '',MrpPrice:'', dishImages: [] }] });
+        setFormData({ ...formData, Items: [...formData.Items, { itemName: '', Discount: '', MrpPrice: '', dishImages: [] }] });
     };
 
     const handleRemoveItem = (index) => {
@@ -92,6 +93,7 @@ const CreateListing = ({ isOpen, onClose }) => {
                     data.append(key, formData[key]);
                 }
             });
+            setBtnLoading(true);
 
             const response = await axios.post('http://localhost:7485/api/v1/Create-Post', data, {
                 headers: {
@@ -99,10 +101,14 @@ const CreateListing = ({ isOpen, onClose }) => {
                 }
             });
             toast.success(response.data.msg);
+
             onClose();
+            window.location.reload();
         } catch (error) {
             console.log(error);
             toast.error(error.response.data.msg);
+        } finally {
+            setBtnLoading(false);
         }
     };
 
@@ -111,82 +117,49 @@ const CreateListing = ({ isOpen, onClose }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto">
             <Toaster />
-            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl overflow-y-auto max-h-screen">
+            {btnLoading && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
+                    <div className="loader"></div>
+                </div>
+            )}
+            <div className={`bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl overflow-y-auto max-h-screen ${btnLoading ? 'opacity-50' : ''}`}>
                 <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-2xl font-semibold">Create Listing</h1>
+                    <h1 className="text-2xl font-semibold">Create Post</h1>
                     <button onClick={onClose} className="text-red-500 hover:text-red-700">Close</button>
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 gap-6 mb-1">
-                        {['Title', 'Details'].map((field, idx) => (
-                            <div key={idx} className="mb-4">
-                                <label className="block text-gray-700 font-medium mb-2">{field} <span className="text-red-500">*</span></label>
-                                <input
-                                    type="text"
-                                    name={field}
-                                    value={formData[field]}
-                                    onChange={handleInputChange}
-                                    className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    required
-                                />
-                            </div>
-                        ))}
+                        <div className="mb-1">
+                            <label className="block text-gray-700 font-medium mb-2">Title <span className="text-red-500">*</span></label>
+                            <input
+                                type="text"
+                                name="Title"
+                                value={formData.Title}
+                                onChange={handleInputChange}
+                                className="w-full border-black px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            />
+                        </div>
+                        <div className="mb-1">
+                            <label className="block text-gray-700 font-medium mb-2">Details <span className="text-red-500">*</span></label>
+                            <textarea
+                                name="Details"
+                                value={formData.Details}
+                                onChange={handleInputChange}
+                                className="w-full border-black px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            />
+                        </div>
                     </div>
+
                     <div className="mb-1">
-                        <label className="block text-gray-700 font-medium mb-2">Items <span className="text-red-500">*</span></label>
-                        {formData.Items.map((item, index) => (
-                            <div key={index} className="mb-4">
-                                <div className="flex items-center mb-4 space-x-4">
-                                    <input
-                                        type="text"
-                                        name="itemName"
-                                        placeholder="Item Name"
-                                        value={item.itemName}
-                                        onChange={(e) => handleItemChange(index, e)}
-                                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        required
-                                    />
-                                    <input
-                                        type="number"
-                                        name="Discount"
-                                        placeholder="Discount"
-                                        value={item.Discount}
-                                        onChange={(e) => handleItemChange(index, e)}
-                                        className="w-1/3 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        required
-                                    />
-                                     <input
-                                        type="text"
-                                        name="MrpPrice"
-                                        placeholder="MrpPrice"
-                                        value={item.MrpPrice}
-                                        onChange={(e) => handleItemChange(index, e)}
-                                        className="w-1/3 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        required
-                                    />
-                                    <button type="button" onClick={() => handleRemoveItem(index)} className="text-red-500 hover:text-red-700">
-                                        <i className="fa-solid fa-trash"></i>
-                                    </button>
-                                </div>
-                                <input
-                                    type="file"
-                                    name="dishImages"
-                                    multiple
-                                    onChange={(e) => handleItemChange(index, e)}
-                                    className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
-                        ))}
-                        <button type="button" onClick={handleAddItem} className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">Add Item</button>
-                    </div>
-                    <div className="mb-1">
-                        <label className="block text-gray-700 font-medium mb-2">Upload Images <span className="text-red-500">*</span></label>
+                        <label className="block text-gray-700 font-medium mb-2">Add posters <span className="text-red-500">*</span></label>
                         <input
                             type="file"
                             multiple
                             name='images'
                             onChange={handleImageChange}
-                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border-black px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         />
                         <div className="grid grid-cols-4 gap-2 mt-4">
@@ -195,7 +168,7 @@ const CreateListing = ({ isOpen, onClose }) => {
                                     <img
                                         src={src}
                                         alt={`Preview ${index}`}
-                                        className="w-full h-24 object-cover rounded-md"
+                                        className="w-full border-black h-24 object-cover rounded-md"
                                     />
                                     <button
                                         type="button"
@@ -211,16 +184,59 @@ const CreateListing = ({ isOpen, onClose }) => {
                     {formData.Pictures.length > 5 && (
                         <div className="text-red-500 text-sm mb-4">You can only upload a maximum of 5 images.</div>
                     )}
+                    <div className="mb-1 border-t-2 border-t-black-500 border-solid pt-2">
+                        <label className="block text-gray-700 font-medium mb-2">Item <span className="text-red-500">*</span></label>
+                        {formData.Items.map((item, index) => (
+                            <div key={index} className="mb-4">
+                                <div className="flex items-center mb-4 space-x-4">
+                                    <input
+                                        type="text"
+                                        name="itemName"
+                                        placeholder="Item Name"
+                                        value={item.itemName}
+                                        onChange={(e) => handleItemChange(index, e)}
+                                        className="w-full border-black px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        required
+                                    />
+                                    <input
+                                        type="number"
+                                        name="Discount"
+                                        placeholder="Discount"
+                                        value={item.Discount}
+                                        onChange={(e) => handleItemChange(index, e)}
+                                        className="w-1/3 border-black px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        name="MrpPrice"
+                                        placeholder="MrpPrice"
+                                        value={item.MrpPrice}
+                                        onChange={(e) => handleItemChange(index, e)}
+                                        className="w-1/3 border-black px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        required
+                                    />
+                                </div>
+                                <input
+                                    type="file"
+                                    name="dishImages"
+                                    multiple
+                                    onChange={(e) => handleItemChange(index, e)}
+                                    className="w-full border-black px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+                        ))}
+                    </div>
+
                     <button
                         type="submit"
                         disabled={isSubmitDisabled}
-                        className={`w-full py-2 text-white rounded-md transition-all duration-300 ease-in-out ${
-                            isSubmitDisabled
-                                ? 'bg-gray-400 cursor-not-allowed'
-                                : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-                        }`}
+                        className={`w-full py-2 text-white rounded-md transition-all duration-300 ease-in-out ${isSubmitDisabled
+                            ? 'bg-gray-400 cursor-not-allowed'
+                            : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+                            }`}
                     >
-                        Post It
+                        {btnLoading ? "Please Wait.." : "Post It"}
                     </button>
                 </form>
             </div>
