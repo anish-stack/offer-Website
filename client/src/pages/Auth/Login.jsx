@@ -20,7 +20,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:7485/api/v1/login', formData);
+      const response = await axios.post('https://offer-website.onrender.com/api/v1/login', formData);
       // Assuming your server responds with some data upon successful login
       console.log('Login Successful:', response.data);
       const data = response.data.token

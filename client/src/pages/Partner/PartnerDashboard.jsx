@@ -14,7 +14,7 @@ const PartnerDashboard = () => {
     useEffect(() => {
         const handleFetchPartner = async () => {
             try {
-                const res = await axios.get("http://localhost:7485/api/v1/list-of-shop-user", {
+                const res = await axios.get("https://offer-website.onrender.com/api/v1/list-of-shop-user", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

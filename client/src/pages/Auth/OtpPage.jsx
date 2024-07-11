@@ -66,7 +66,7 @@ const OtpPage = () => {
       return;
     }
     try {
-      const res = await axios.post('http://localhost:7485/api/v1/verify-otp-register', formData);
+      const res = await axios.post('https://offer-website.onrender.com/api/v1/verify-otp-register', formData);
       console.log('OTP submitted:', res);
       toast.success('OTP verified successfully!');
       // Redirect to another page or handle success as needed
@@ -82,7 +82,7 @@ const OtpPage = () => {
     setFormData({ ...formData, otp: '' }); // Clear OTP input
 
     try {
-      const res = await axios.post('http://localhost:7485/api/v1/resend-otp-register', { PartnerEmail: formData.PartnerEmail });
+      const res = await axios.post('https://offer-website.onrender.com/api/v1/resend-otp-register', { PartnerEmail: formData.PartnerEmail });
       console.log('OTP resent:', res);
       toast.success('OTP resent successfully!');
       

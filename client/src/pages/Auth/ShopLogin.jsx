@@ -20,7 +20,7 @@ const ShopLogin = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:7485/api/v1/login-shop-user', formData);
+      const response = await axios.post('https://offer-website.onrender.com/api/v1/login-shop-user', formData);
       // Assuming your server responds with some data upon successful login
       // console.log('Login Successful:', response.data);
 

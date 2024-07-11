@@ -17,7 +17,7 @@ const SingleListing = () => {
 
     const fetchSingleData = async () => {
         try {
-            const response = await axios.get(`http://localhost:7485/api/v1/get-listing/${encodeURIComponent(id)}`);
+            const response = await axios.get(`https://offer-website.onrender.com/api/v1/get-listing/${encodeURIComponent(id)}`);
             const data = response.data.data;
             console.log(data);
             setListing(data);

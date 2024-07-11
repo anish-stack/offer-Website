@@ -29,7 +29,7 @@ const SearchProduct = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const response = await axios.post(`http://localhost:7485/api/v1/search`, {
+                const response = await axios.post(`https://offer-website.onrender.com/api/v1/search`, {
                     formData,
                     filter // Pass filter as part of the request
                 });

@@ -22,7 +22,7 @@ const EditPost = () => {
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const response = await axios.get(`http://localhost:7485/api/v1/My-Shop-Post`, {
+                const response = await axios.get(`https://offer-website.onrender.com/api/v1/My-Shop-Post`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -123,7 +123,7 @@ const EditPost = () => {
         });
 
         try {
-            const response = await axios.put(`http://localhost:7485/api/v1/My-Shop-Edit-post/${id}`, formDataToSubmit, {
+            const response = await axios.put(`https://offer-website.onrender.com/api/v1/My-Shop-Edit-post/${id}`, formDataToSubmit, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',

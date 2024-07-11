@@ -36,7 +36,7 @@ const PartnerRegister = () => {
         }
         setLoading(true);
         try {
-            const response = await axios.post('http://localhost:7485/api/v1/Create-Register', formData);
+            const response = await axios.post('https://offer-website.onrender.com/api/v1/Create-Register', formData);
             console.log(response.data);
             toast.success(response.data.message)
             window.location.href = `/Otp?email=${formData.PartnerEmail}&Partner-register=true&Date=${Date.now()}`;

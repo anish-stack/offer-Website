@@ -135,7 +135,7 @@ const UserRegister = () => {
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.post('http://localhost:7485/api/v1/register-list-user', formData, {
+            const response = await axios.post('https://offer-website.onrender.com/api/v1/register-list-user', formData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -160,7 +160,7 @@ const UserRegister = () => {
                     description: `Payment For Plans Name ${formData.ListingPlan}`,
                     image: "https://i.pinimg.com/originals/9e/ff/85/9eff85f9a3f9540bff61bbeffa0f6305.jpg",
                     order_id: order?.id,
-                    callback_url: "http://localhost:7485/api/v1/paymentverification",
+                    callback_url: "https://offer-website.onrender.com/api/v1/paymentverification",
                     prefill: {
                         name: formData.UserName,
                         email: formData.Email,

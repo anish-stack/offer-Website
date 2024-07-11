@@ -11,7 +11,7 @@ const ShopDashboard = () => {
     const [isCreateListingOpen, setIsCreateListingOpen] = useState(false);
     const fetchMyShopDetails = async () => {
         try {
-            const response = await axios.get('http://localhost:7485/api/v1/My-Shop-Details', {
+            const response = await axios.get('https://offer-website.onrender.com/api/v1/My-Shop-Details', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

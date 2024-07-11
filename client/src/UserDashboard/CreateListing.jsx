@@ -95,7 +95,7 @@ const CreateListing = ({ isOpen, onClose, fetchMyShopDetails }) => {
             });
             setBtnLoading(true);
 
-            const response = await axios.post('http://localhost:7485/api/v1/Create-Post', data, {
+            const response = await axios.post('https://offer-website.onrender.com/api/v1/Create-Post', data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

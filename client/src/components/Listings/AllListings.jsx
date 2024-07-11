@@ -7,7 +7,7 @@ const AllListings = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get(`http://localhost:7485/api/v1/get-Listing`);
+            const response = await axios.get(`https://offer-website.onrender.com/api/v1/get-Listing`);
             const data = response.data.data;
             const filter  = data.filter((item)=> item.isApprovedByAdmin === true)
             // console.log(data)
