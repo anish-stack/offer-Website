@@ -172,7 +172,7 @@ exports.paymentVerification = async (req, res) => {
                 console.error('User not found for the given order ID');
             }
             res.redirect(
-                `http://localhost:5173/paymentsuccess?reference=${razorpay_payment_id}`
+                `https://naideal.vercel.app/paymentsuccess?reference=${razorpay_payment_id}`
             );
         } else {
             res.status(400).json({
