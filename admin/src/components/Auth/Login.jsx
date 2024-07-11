@@ -22,7 +22,8 @@ const Login = () => {
       if (formData.Email === "default@example.com" && formData.Password === "defaultpassword") {
         localStorage.setItem('newDealToken', token)
         alert('Login successful')
-        window.location.href = "/Card"
+        // send to home route
+        window.location.href = "/"
       } else {
         alert('Invalid email or password')
       }
