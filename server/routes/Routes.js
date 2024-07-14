@@ -24,7 +24,8 @@ router.post('/logout', logout);
 router.post('/Create-Listing', upload.any(), CreateListing); // Using upload.any() to accept any field names for files
 router.post('/Create-Post', protect, upload.any(), CreatePost);
 router.post('/paymentverification', paymentVerification)
-router.get('/get-Listing', getAllPost);
+router.get('/get-Listing-un', getUnApprovedPosts);
+router.get('/Un-Approved')
 router.get('/get-listing/:id', getPostById);
 router.delete('/delete-listing/:id', deletePostById);
 router.delete('/delete-all-listings', deleteAllPost);

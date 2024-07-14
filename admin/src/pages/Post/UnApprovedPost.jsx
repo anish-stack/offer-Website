@@ -11,18 +11,22 @@ const UnApprovedPost = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/get-Listing`);
-                const data = res.data.data
-                const filter = data.filter((item) => item.isApprovedByAdmin === false)
-                setUnApprovedPosts(filter);
+                const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/get-Listing-un`);
+
+                // Logging the original data
+                console.log('Original data:', res.data.unApprovedPosts                );
+                    const data = res.data.unApprovedPosts
+                    setUnApprovedPosts(data)
+      
+             
             } catch (error) {
                 console.error('Error fetching unapproved posts:', error);
             }
         };
-
+    
         fetchPosts();
     }, []);
-
+    
     // Pagination logic
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
@@ -102,9 +106,7 @@ const UnApprovedPost = () => {
                                 {formatDateTime(post.createdAt)}
                             </p>
                             <div className="mt-2 grid grid-cols-2 gap-2">
-                                <button className="text-sm bg-blue-700 whitespace-nowrap hover:bg-blue-900 text-white px-4 py-1 rounded mr-2" onClick={() => openModal(post)}>
-                                    See Post
-                                </button>
+                         
                                 <button onClick={() => handleApprove(post._id)} className="text-sm bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded mr-2">
                                     Approve
                                 </button>
@@ -130,77 +132,7 @@ const UnApprovedPost = () => {
             </div>
 
             {/* Modal */}
-            {modalPost && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white p-4 rounded-lg w-11/12 max-w-3xl">
-                        <h4 className='text-xl font-bold '>Shop Info</h4>
-                        <p className="text-gray-600 mb-2">Shop Name :{modalPost.shopDetails.ShopName}</p>
-                        <p className="text-gray-600 mb-2">Shop Package :{modalPost.shopDetails.ListingPlan}</p>
-
-                        <p className="text-gray-600 mb-2">Shop id : <a href="" className='text-blue-500 underline'>{modalPost.shopDetails._id}</a></p>
-                        <hr className='border-2' />
-                        <h2 className="text-lg font-bold mb-2">{modalPost.Title}</h2>
-                        <p className="text-gray-600 mb-2">{modalPost.Details}</p>
-
-
-                        <p className="text-gray-900 font-bold mb-2">Cover Images</p>
-                        <div className="flex flex-wrap mb-2">
-                            {modalPost.Pictures.map(pic => (
-                                <img key={pic._id} src={pic.ImageUrl} alt="Post Image" className="w-24 h-24 object-cover mr-2 mb-2" />
-                            ))}
-                        </div>
-                        <div>
-                            <p className="text-sm truncate text-gray-700 mb-2">
-                                {modalPost.shopDetails ? (
-                                    <>
-                                        {modalPost.shopDetails.ShopAddress.NearByLandMark || "N/A"}
-                                        , <address>
-                                            {modalPost.shopDetails.ShopAddress.PinCode || "N/A"}
-                                            ,{modalPost.shopDetails.ShopAddress.ShopAddressStreet || "N/A"}
-
-                                        </address>
-                                    </>
-                                ) : (
-                                    "N/A"
-                                )}
-                            </p>
-                        </div>
-
-                        <div className="flex flex-wrap mb-2">
-                            {modalPost.Items && modalPost.Items.map(item => (
-                                <div key={item._id}>
-                                    <h3 className="font-semibold">{item.itemName}</h3>
-                                    <p>MRP: {item.MrpPrice}, Discount: {item.Discount}%</p>
-                                    <p className='text-lg from-orange-500 font-bold text-red-400'>Item Image</p>
-
-                                    <div className="flex flex-wrap">
-                                        {item.dishImages.map(pic => (
-                                            <img key={pic.public_id} src={pic.ImageUrl} alt="Item Image" className="w-24 h-24 object-cover mr-2 mb-2" />
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        <p className={`text-sm font-semibold ${modalPost.isApprovedByAdmin ? 'text-green-600' : 'text-red-600'}`}>
-                            {modalPost.isApprovedByAdmin ? 'Approved' : 'Not Approved'}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                            {formatDateTime(modalPost.createdAt)}
-                        </p>
-                        <div className="mt-2">
-                            <button onClick={() => handleApprove(modalPost._id)} className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded mr-2">
-                                Approve
-                            </button>
-                            <button onClick={() => handleDelete(modalPost._id)} className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded">
-                                Delete
-                            </button>
-                            <button onClick={closeModal} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-1 rounded ml-2">
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+       
         </div>
     );
 };
