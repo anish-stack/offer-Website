@@ -54,7 +54,8 @@ const CreatePackage = () => {
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
                         How Many Post in This Package
                     </label>
-                    <textarea
+                    <input
+                      type="text"
                         id="postsDone"
                         name="postsDone"
                         value={packageDetails.postsDone}
