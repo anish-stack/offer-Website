@@ -1,6 +1,8 @@
 const Partner = require('../models/Partner.model');
 const sendEmail = require('../utils/SendEmail');
 const jwt = require('jsonwebtoken')
+const dotenv = require('dotenv')
+dotenv.config()
 const ListingUser = require('../models/User.model'); // Adjust the path as per your project structure
 const sendToken = require('../utils/SendToken')
 // Create New Partner

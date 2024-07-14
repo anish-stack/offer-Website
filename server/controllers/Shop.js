@@ -1,6 +1,8 @@
 const Post  = require('../models/listing.model')
 const ListingUser = require('../models/User.model'); // Adjust the path as per your project structure
 const axios = require('axios')
+const dotenv = require('dotenv')
+dotenv.config()
 const Partner = require('../models/Partner.model')
 const Package = require('../models/Pacakge')
 const City = require('../models/CityModel')

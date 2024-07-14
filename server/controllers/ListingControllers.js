@@ -4,7 +4,8 @@ const Cloudinary = require('cloudinary').v2;
 const { validationResult } = require('express-validator');
 const sendEmail = require('../utils/SendEmail');
 const ListingUser = require('../models/User.model')
-
+const dotenv = require('dotenv')
+dotenv.config()
 Cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.envCLOUDINARY_API_KEY,

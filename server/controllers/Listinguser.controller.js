@@ -2,6 +2,8 @@ const ListingUser = require('../models/User.model'); // Adjust the path as per y
 const sendEmail = require('../utils/SendEmail');
 const sendToken = require('../utils/SendToken');
 const Listing = require('../models/listing.model');
+const dotenv = require('dotenv')
+dotenv.config()
 const Cloudinary = require('cloudinary').v2;
 const jwt = require('jsonwebtoken');
 const Razorpay = require('razorpay');
