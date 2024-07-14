@@ -25,7 +25,7 @@ router.post('/Create-Listing', upload.any(), CreateListing); // Using upload.any
 router.post('/Create-Post', protect, upload.any(), CreatePost);
 router.post('/paymentverification', paymentVerification)
 router.get('/get-Listing-un', getUnApprovedPosts);
-router.get('/Un-Approved')
+router.get('/get-listing',getAllListing)
 router.get('/get-listing/:id', getPostById);
 router.delete('/delete-listing/:id', deletePostById);
 router.delete('/delete-all-listings', deleteAllPost);
