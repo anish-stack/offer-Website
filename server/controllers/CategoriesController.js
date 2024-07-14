@@ -13,7 +13,7 @@ console.log(process.env.CLOUDINARY_SECRET_KEY);
 
 Cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
-  api_key: process.envCLOUDINARY_API_KEY,
+  api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_SECRET_KEY
 });
 
