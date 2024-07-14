@@ -42,7 +42,7 @@ exports.MakeAPostApproved = async (req, res) => {
 };
 exports.getDashboardData = async (req, res) => {
     try {
-        const paymentsResponse = await axios.get('${process.env.BACKEND_URL}/api/v1/admin-all-payments');
+        const paymentsResponse = await axios.get(`${process.env.BACKEND_URL}/api/v1/admin-all-payments`);
         const payments = paymentsResponse.data.payments;
 
         // Calculate total amount of all payments
