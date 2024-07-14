@@ -296,7 +296,7 @@ exports.CreateForgetPasswordRequest = async (req, res) => {
         <p style="margin-bottom: 15px;">This OTP is valid for 10 minutes. Please use it within this time frame.</p>
         <p>If you did not request this change, please ignore this email.</p>
         <div style="text-align: center;">
-            <a href="http://localhost:5173/VerifyOtp?Email=${Email}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
+            <a href="${process.env.FRONTEND_URL}/VerifyOtp?Email=${Email}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
         </div>
         <div style="margin-top: 20px; font-size: 14px; color: #666;">
             <p>Thank you,</p>
