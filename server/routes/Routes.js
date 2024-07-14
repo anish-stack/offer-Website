@@ -1,7 +1,7 @@
 const express = require('express');
 const { createPartner, verifyOtpAndEmail, resendAccountVerifyOtp, resendForgetPasswordOtp, login, logout, verifyForgetPasswordOtp, deletePartnerAccount, forgetPasswordRequest, GetAllShopListByPartner, getAllPartner, GetAllShopListByPartnerAdmin } = require('../controllers/Partnercontroller');
 const { CreateListing, getAllListing, getListingById, deleteListingById, deleteAllListings, UpdateListing, getPostByCategory } = require('../controllers/ListingControllers');
-const { ListUser, LoginListUser, MyShopDetails, CreatePost, getAllPost, getPostById, deletePostById, deleteAllPost, getMyPostOnly, SearchByPinCodeCityAndWhatYouWant, getAllShops, DeleteListUser, updateDetailsOfListUser, paymentVerification, showPaymentDetails, allPayments, CreateForgetPasswordRequest, verifyOtp } = require('../controllers/Listinguser.controller');
+const { ListUser, LoginListUser, MyShopDetails, CreatePost, getAllPost, getPostById, deletePostById, deleteAllPost, getMyPostOnly, SearchByPinCodeCityAndWhatYouWant, getAllShops, DeleteListUser, updateDetailsOfListUser, paymentVerification, showPaymentDetails, allPayments, CreateForgetPasswordRequest, verifyOtp, getAllPostApprovedPost } = require('../controllers/Listinguser.controller');
 const { protect } = require('../middlewares/Protect');
 const multer = require('multer');
 const { getUnApprovedPosts, MakeAPostApproved, getDashboardData } = require('../controllers/Shop');
@@ -25,7 +25,7 @@ router.post('/Create-Listing', upload.any(), CreateListing); // Using upload.any
 router.post('/Create-Post', protect, upload.any(), CreatePost);
 router.post('/paymentverification', paymentVerification)
 router.get('/get-Listing-un', getUnApprovedPosts);
-router.get('/get-listing',getAllListing)
+router.get('/get-listing',getAllPostApprovedPost)
 router.get('/get-listing/:id', getPostById);
 router.delete('/delete-listing/:id', deletePostById);
 router.delete('/delete-all-listings', deleteAllPost);

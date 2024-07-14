@@ -718,6 +718,118 @@ exports.getAllPost = async (req, res) => {
         });
     }
 };
+exports.getAllPostApprovedPost = async (req, res) => {
+    try {
+        // Fetch all listings from the database
+        const listings = await Listing.find({ isApprovedByAdmin: true });
+
+        // If no listings found, return an error response
+        if (listings.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No listings found.',
+            });
+        }
+
+        // Fetch all ShopDetails to categorize by plan type
+        const shopDetails = await ListingUser.find();
+
+        // If no shopDetails found, handle accordingly
+        if (shopDetails.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No shop details found.',
+            });
+        }
+
+        // Categorize listings by plan type
+        let goldListings = [];
+        let silverListings = [];
+        let freeListings = [];
+
+        listings.forEach(listing => {
+            const foundShopDetails = shopDetails.find(sd => sd._id.toString() === listing.ShopId.toString());
+            if (!foundShopDetails) return; // Skip if shop details not found
+
+            if (foundShopDetails.ListingPlan === 'Gold') {
+                goldListings.push({
+                    listing,
+                    shopDetails: foundShopDetails
+                });
+            } else if (foundShopDetails.ListingPlan === 'Silver') {
+                silverListings.push({
+                    listing,
+                    shopDetails: foundShopDetails
+                });
+            } else if (foundShopDetails.ListingPlan === 'Free') {
+                freeListings.push({
+                    listing,
+                    shopDetails: foundShopDetails
+                });
+            }
+        });
+
+        // Shuffle the arrays to introduce randomness
+        shuffleArray(goldListings);
+        shuffleArray(silverListings);
+        shuffleArray(freeListings);
+
+        // Initialize counters for each type of listing
+        let shuffledListings = []
+        let goldCount = 0;
+        let silverCount = 0;
+        let freeCount = 0;
+
+        for (let i = 0; i < listings.length; i++) {
+            // Check if there are gold listings left to show and less than 2 gold posts have been added
+            if (goldCount < goldListings.length && goldCount < 2) {
+                // Push the next gold listing into shuffledListings
+                shuffledListings.push(goldListings[goldCount]);
+                goldCount++;
+            } else if (silverCount < silverListings.length && silverCount < 2) {
+                // Push the next silver listing into shuffledListings
+                shuffledListings.push(silverListings[silverCount]);
+                silverCount++;
+            } else {
+                // Push the next free listing into shuffledListings
+                shuffledListings.push(freeListings[freeCount]);
+                freeCount++;
+            }
+        }
+
+        // Handle remaining gold and silver listings if any
+        while (goldCount < goldListings.length) {
+            shuffledListings.push(goldListings[goldCount]);
+            goldCount++;
+        }
+
+        while (silverCount < silverListings.length) {
+            shuffledListings.push(silverListings[silverCount]);
+            silverCount++;
+        }
+
+        // Handle remaining free listings if any
+        while (freeCount < freeListings.length) {
+            shuffledListings.push(freeListings[freeCount]);
+            freeCount++;
+        }
+
+        // console.log(shuffledListings)
+        // Return successful response with shuffled listings
+        return res.status(200).json({
+            success: true,
+            count: shuffledListings.length,
+            data: shuffledListings,
+        });
+    } catch (error) {
+        console.error('Error fetching listings:', error);
+        // Return error response if there's a server error
+        return res.status(500).json({
+            success: false,
+            error: 'Server error. Could not fetch listings.',
+        });
+    }
+};
 // Function to shuffle an array
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
