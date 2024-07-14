@@ -64,7 +64,7 @@ const AllCategories = () => {
             toast.success('Category Created Successful')
         } catch (error) {
             console.log(error)
-            toast.success('Error in Category Created ')
+            toast.error('Error in Category Created ')
         }
     }
 
