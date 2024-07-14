@@ -1,7 +1,16 @@
 const Categories = require('../models/CategoreiesModel');
 const Cloudinary = require('cloudinary').v2;
 const dotenv = require('dotenv')
-dotenv.config()
+const result = dotenv.config();
+
+if (result.error) {
+    console.error(result.error);
+    throw new Error('Failed to load environment variables');
+}
+console.log(process.env.CLOUD_NAME);
+console.log(process.env.CLOUDINARY_API_KEY);
+console.log(process.env.CLOUDINARY_SECRET_KEY);
+
 Cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.envCLOUDINARY_API_KEY,
