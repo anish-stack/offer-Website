@@ -6,8 +6,8 @@ const sendEmail = require('../utils/SendEmail');
 const ListingUser = require('../models/User.model')
 
 Cloudinary.config({
-    cloud_name: 'dsojxxhys',
-    api_key: '974214723343354',
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.envCLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_SECRET_KEY
 });
 
@@ -318,5 +318,66 @@ exports.UpdateListing = async (req, res) => {
             msg: "Error updating listing",
             error: error.message
         });
+    }
+};
+
+
+exports.getPostByCategory = async (req, res) => {
+    try {
+        const { Name } = req.params;
+
+        // Fetch all listings by category
+        const listings = await ListingUser.find({ ShopCategory: Name });
+
+        if (!listings || listings.length === 0) {
+            return res.status(404).json({ message: 'No listings found for this category' });
+        }
+
+        // Fetch and process posts for each listing
+        const postsPromises = listings.map(async (listing) => {
+            // Fetch posts for the current listing
+            const posts = await Listing.find({ ShopId: listing._id }).sort({ createdAt: -1 });
+
+            // Attach plan information to each post
+            const postsWithPlan = posts.map(post => ({
+                ...post.toObject(), // Convert Mongoose document to plain JS object
+                Plan: listing.ListingPlan // Attach listing plan to each post
+            }));
+
+            return postsWithPlan;
+        });
+
+        // Wait for all post fetching operations to complete
+        let postsArrays = await Promise.all(postsPromises);
+
+        // Flatten the array of arrays into a single array of posts
+        let posts = postsArrays.flat();
+
+        // Separate posts by listing plan
+        const goldPosts = posts.filter(post => post.Plan === 'Gold');
+        const silverPosts = posts.filter(post => post.Plan === 'Silver');
+        const freePosts = posts.filter(post => post.Plan === 'Free');
+
+        // Shuffle function
+        const shuffle = (array) => {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        };
+
+        // Shuffle posts within each plan category
+        shuffle(goldPosts);
+        shuffle(silverPosts);
+        shuffle(freePosts);
+
+        // Combine posts with priority: Gold, Silver, Free
+        const combinedPosts = [...goldPosts, ...silverPosts, ...freePosts];
+
+        res.status(200).json(combinedPosts);
+    } catch (error) {
+        console.error('Error fetching posts by category:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };

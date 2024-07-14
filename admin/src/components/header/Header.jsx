@@ -14,7 +14,7 @@ const Sidebar = () => {
             <div className="flex h-screen">
                 <aside className="w-72 bg-gray-800 text-white lg:w-64 md:w-48 sm:w-40">
                     <div className="p-4">
-                        <h1 className="text-xl font-semibold">Sidebar Title</h1>
+                        <h1 className="text-xl font-semibold">Nai Deal Admin</h1>
                     </div>
                     <nav className="mt-4">
                         <ul>
@@ -31,6 +31,16 @@ const Sidebar = () => {
                             <li className="p-2 hover:bg-gray-700">
                                 <NavLink to="/All-Shops" className={({ isActive }) => cn("block px-4 py-2", isActive ? "bg-gray-700" : "")}>
                                     All Shops
+                                </NavLink>
+                            </li>
+                            <li className="p-2 hover:bg-gray-700">
+                                <NavLink to="/All-categories" className={({ isActive }) => cn("block px-4 py-2", isActive ? "bg-gray-700" : "")}>
+                                    Categories
+                                </NavLink>
+                            </li>
+                            <li className="p-2 hover:bg-gray-700">
+                                <NavLink to="/All-City" className={({ isActive }) => cn("block px-4 py-2", isActive ? "bg-gray-700" : "")}>
+                                    City
                                 </NavLink>
                             </li>
                             <li className="p-2 hover:bg-gray-700">

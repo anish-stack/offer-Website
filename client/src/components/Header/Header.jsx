@@ -1,28 +1,48 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import axios from 'axios'
 const Header = ({ locationDetails }) => {
     const [showMenu, setShowMenu] = useState(false);
-    const [activeTab, setActiveTab] = useState('');
+    const [activeTab, setActiveTab] = useState('normal');
     const [searchInput, setSearchInput] = useState('');
     const [advancedSearchInput, setAdvancedSearchInput] = useState('');
     const [pincodeInput, setPincodeInput] = useState('');
     const ShopToken = localStorage.getItem('ShopToken')
     const PartnerToken = localStorage.getItem('B2bToken')
-    const cities = [
-        'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Ahmedabad', 'Chennai', 'Kolkata', 'Surat', 'Pune', 'Jaipur',
-        'Lucknow', 'Kanpur', 'Nagpur', 'Indore', 'Thane', 'Bhopal', 'Visakhapatnam', 'Pimpri-Chinchwad', 'Patna',
-        'Vadodara', 'Ghaziabad', 'Ludhiana', 'Agra', 'Nashik', 'Faridabad', 'Meerut', 'Rajkot', 'Kalyan-Dombivli'
-    ];
 
-    const categories = [
-        'Bakery','Hotels', 'Flights', 'Food', 'Transportation', 'Entertainment', 'Shopping',
-        'Healthcare', 'Education', 'Finance', 'Technology', 'Utilities', 'Events', 'Other'
-    ];
+    const [data, setData] = useState([])
+    const [city, setCity] = useState([])
+
+    const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`${BackendUrl}/admin-get-categories`)
+            const data = response.data.data
+            setData(data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    const fetchCity = async () => {
+        try {
+            const response = await axios.get(`${BackendUrl}/admin-get-city`);
+            const data = response.data
+            setCity(data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        fetchData()
+        fetchCity()
+    }, [])
+
 
     const handleSearch = () => {
         if (activeTab === 'normal') {
-            const query = `?query=${searchInput}&city=${document.getElementById('city').value}&PinCode=${pincodeInput}&searchType=${activeTab}`;
+            const query = `?query=${searchInput}&city=${document.getElementById('city').value}&searchType=${activeTab}`;
             window.location.href = `/Search${query}`;
         } else if (activeTab === 'advanced') {
             const query = `?query=${advancedSearchInput}&city=${document.getElementById('city').value}&ShopCategory=${document.getElementById('category').value}&pincode=${pincodeInput}&searchType=${activeTab}`;
@@ -59,7 +79,7 @@ const Header = ({ locationDetails }) => {
                         ) : null}
                         {
                             ShopToken || PartnerToken ? (null) : (
-                                <li><Link className='text-slate-900 space-x-3 font-bold text-lg' to="/Partner-Login">Partner Login</Link> / <Link className='text-green-400 space-x-3 font-bold text-lg' to="/Shop-login">Shop Login</Link></li>
+                                <li> <Link className='text-slate-900 space-x-3 font-bold text-lg' to="/Shop-login">Shop Login</Link></li>
 
                             )
                         }                    </ul>
@@ -96,25 +116,25 @@ const Header = ({ locationDetails }) => {
                 </div>
             </div>
             {activeTab === 'normal' && (
-                <div className={`tab-search grid grid-cols-1 gap-3 lg:grid-cols-4 md:grid-cols-3 max-w-5xl w-full mx-auto p-3`}>
+                <div className={`tab-search grid grid-cols-1 gap-3 lg:grid-cols-3 md:grid-cols-3 max-w-5xl w-full mx-auto p-3`}>
                     <div className='mb-4 w-full'>
                         <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='city'>Select City</label>
                         <select id='city' className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline'>
                             {locationDetails && locationDetails.city ? (
                                 <>
                                     <option value={locationDetails.city}>{locationDetails.city}</option>
-                                    {cities.map((city, index) => (
-                                        <option key={index} value={city}>{city}</option>
+                                    {city && city.map((city, index) => (
+                                        <option key={index} value={city.cityName}>{city.cityName}</option>
                                     ))}
                                 </>
                             ) : (
-                                cities.map((city, index) => (
-                                    <option key={index} value={city}>{city}</option>
+                                city && city.map((city, index) => (
+                                    <option key={index} value={city.cityName}>{city.cityName}</option>
                                 ))
                             )}
                         </select>
                     </div>
-                    <div className='mb-4 w-full'>
+                    {/* <div className='mb-4 w-full'>
                         <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='pincode'>Pincode</label>
                         <input
                             id='pincode'
@@ -124,7 +144,7 @@ const Header = ({ locationDetails }) => {
                             onKeyPress={handleKeyPress}
                             className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                         />
-                    </div>
+                    </div> */}
 
 
                     <div className='mb-4 w-full'>
@@ -158,13 +178,13 @@ const Header = ({ locationDetails }) => {
                             {locationDetails && locationDetails.city ? (
                                 <>
                                     <option value={locationDetails.city}>{locationDetails.city}</option>
-                                    {cities.map((city, index) => (
-                                        <option key={index} value={city}>{city}</option>
+                                    {city && city.map((city, index) => (
+                                        <option key={index} value={city.cityName}>{city.cityName}</option>
                                     ))}
                                 </>
                             ) : (
-                                cities.map((city, index) => (
-                                    <option key={index} value={city}>{city}</option>
+                                city && city.map((city, index) => (
+                                    <option key={index} value={city.cityName}>{city.cityName}</option>
                                 ))
                             )}
                         </select>
@@ -185,8 +205,8 @@ const Header = ({ locationDetails }) => {
                     <div className='mb-4 w-full'>
                         <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='category'>Select Categories</label>
                         <select id='category' className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline'>
-                            {categories.map((category, index) => (
-                                <option key={index} value={category}>{category}</option>
+                            {data && data.map((category, index) => (
+                                <option key={index} value={category.CategoriesName}>{category.CategoriesName}</option>
                             ))}
                         </select>
                     </div>

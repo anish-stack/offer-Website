@@ -5,10 +5,11 @@ import UpgradePackage from './UpgradePackage';
 const ParentComponent = () => {
     const [shopDetails, setShopDetails] = useState(null);
     const token = localStorage.getItem('ShopToken')
+    const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
     const fetchMyShopDetails = async () => {
         try {
-            const response = await axios.get('https://offer-website.onrender.com/api/v1/My-Shop-Details', {
+            const response = await axios.get(`${BackendUrl}/My-Shop-Details`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

@@ -13,9 +13,11 @@ const MyPost = ({fetchMyShopDetails}) => {
         fetchMyPost();
     }, []);
 
+    const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
+
     const fetchMyPost = async () => {
         try {
-            const response = await axios.get('https://offer-website.onrender.com/api/v1/My-Shop-Post', {
+            const response = await axios.get(`${BackendUrl}/My-Shop-Post`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -48,7 +50,7 @@ const MyPost = ({fetchMyShopDetails}) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const res = await axios.delete(`https://offer-website.onrender.com/api/v1/delete-listing/${id}`);
+                    const res = await axios.delete(`${BackendUrl}/delete-listing/${id}`);
                     console.log(res.data);
                     // toast.success("Test Deleted");
                     fetchMyPost();

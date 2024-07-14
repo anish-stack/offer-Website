@@ -69,6 +69,7 @@ const CreateListing = ({ isOpen, onClose, fetchMyShopDetails }) => {
     };
 
     const token = localStorage.getItem('ShopToken');
+    const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -95,7 +96,7 @@ const CreateListing = ({ isOpen, onClose, fetchMyShopDetails }) => {
             });
             setBtnLoading(true);
 
-            const response = await axios.post('https://offer-website.onrender.com/api/v1/Create-Post', data, {
+            const response = await axios.post(`${BackendUrl}/Create-Post`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

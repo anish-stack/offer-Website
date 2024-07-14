@@ -75,25 +75,31 @@ const ListingUserSchema = new mongoose.Schema({
     PasswordChangeOtp: {
         type: String
     },
+    OtpExipredTme:{
+        type:Date
+    },
+    newPassword:{
+        type: String
+    },
     Post: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "ListingData",
+        ref: "PostByShop",
     },
-    FreeListing:{
+    FreeListing: {
         type: String,
-       
+
     },
-    OrderId:{
+    OrderId: {
         type: String,
     },
-    PaymentDone:{
+    PaymentDone: {
         type: Boolean,
-        default:false
+        default: false
     },
     PartnerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Partner"
-        }
+    }
 }, { timestamps: true });
 
 ListingUserSchema.pre('save', async function (next) {
@@ -115,6 +121,6 @@ ListingUserSchema.methods.comparePassword = function (candidatePassword) {
     return bcrypt.compare(candidatePassword, this.Password);
 };
 
-const ListingUser = mongoose.model('ListingUser', ListingUserSchema);
+const ListingUser = mongoose.model('ShopUser', ListingUserSchema);
 
 module.exports = ListingUser;

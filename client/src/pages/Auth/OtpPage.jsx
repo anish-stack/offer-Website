@@ -8,11 +8,13 @@ const OtpPage = () => {
   const searchParams = new URLSearchParams(location.search);
   const partnerEmail = searchParams.get('email') || '';
   const resendOTP = searchParams.get('resendOTP') === 'true';
+  const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
   const [formData, setFormData] = useState({
     PartnerEmail: partnerEmail,
     otp: ''
   });
+  
 
   const [errors, setErrors] = useState({});
   const [resendDisabled, setResendDisabled] = useState(resendOTP); // Set resendDisabled based on query param
@@ -66,7 +68,7 @@ const OtpPage = () => {
       return;
     }
     try {
-      const res = await axios.post('https://offer-website.onrender.com/api/v1/verify-otp-register', formData);
+      const res = await axios.post(`${BackendUrl}/verify-otp-register`, formData);
       console.log('OTP submitted:', res);
       toast.success('OTP verified successfully!');
       // Redirect to another page or handle success as needed
@@ -82,7 +84,7 @@ const OtpPage = () => {
     setFormData({ ...formData, otp: '' }); // Clear OTP input
 
     try {
-      const res = await axios.post('https://offer-website.onrender.com/api/v1/resend-otp-register', { PartnerEmail: formData.PartnerEmail });
+      const res = await axios.post(`${BackendUrl}/resend-otp-register`, { PartnerEmail: formData.PartnerEmail });
       console.log('OTP resent:', res);
       toast.success('OTP resent successfully!');
       

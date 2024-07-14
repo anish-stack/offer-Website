@@ -16,7 +16,7 @@ const ShopsOfPartner = () => {
     useEffect(() => {
         const fetchPartnerDetails = async () => {
             try {
-                const response = await axios.get(`https://offer-website.onrender.com/api/v1/admin-by-partner-user/${partnerId}`);
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/admin-by-partner-user/${partnerId}`);
                 setPartnerDetails(response.data);
                 setFilteredShops(response.data.shops); // Initialize filtered shops with all shops
             } catch (error) {

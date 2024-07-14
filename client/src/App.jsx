@@ -26,6 +26,10 @@ import ParentComponent from './pages/Packages/ParentComponent';
 import EditPost from './UserDashboard/EditPost';
 import Success from './components/Payment/Success';
 import Failed from './components/Payment/Failed';
+import PostByCategories from './components/Category/PostByCategories';
+import ForgetPassword from './pages/Auth/ForgetPassword';
+import PasswordChangeOtp from './pages/Auth/PasswordChangeOtp';
+import ErrorPage from './pages/404/ErrorPage';
 function App() {
   const [locationDetails, setLocationDetails] = useState(null);
   const [locationPopup, setLocationPopup] = useState(false);
@@ -110,16 +114,23 @@ function App() {
         <Route path='/Partner-Login' element={<Login />} />
         <Route path='/Register-Partner' element={<PartnerRegister />} />
         <Route path='/Otp' element={<OtpPage />} />
-        <Route path='/User-register-by-Partner/:PartnerId' element={<UserRegister />} />
+        <Route path='/User-register-by-Partner/:PartnerId' locationDetails={locationDetails}  element={<UserRegister />} />
         <Route path='/Shop-Login' element={<ShopLogin />} />
         <Route path='/Shop-Dashboard' element={<ShopDashboard />} />
         <Route path='/Shop-Dashboard/Create-Post' element={<CreateListing />} />
         <Route path='/Search' element={<SearchProduct />} />
         <Route path='/Partner-Dashboard' element={<PartnerDashboard />} />
         <Route path='/View-More-Offers/Shop-profile/:id/:ShopName' element={<ShopProfile />} />
+        <Route path='/*' element={<ErrorPage />} />
 
         <Route path='/upgrade-package/:id' element={<ParentComponent />} />
         <Route path='/edit-post' element={<EditPost />} />
+        <Route path='/Post-by-categories' element={<PostByCategories  />} />
+        <Route path='/Forget-Password' element={<ForgetPassword  />} />
+        <Route path='/VerifyOtp' element={<PasswordChangeOtp  />} />
+
+
+
 
         <Route path='/paymentsuccess' element={<Success />} />
         <Route path='/payment-failed' element={<Failed />} />

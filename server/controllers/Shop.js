@@ -3,6 +3,9 @@ const ListingUser = require('../models/User.model'); // Adjust the path as per y
 const axios = require('axios')
 const Partner = require('../models/Partner.model')
 const Package = require('../models/Pacakge')
+const City = require('../models/CityModel')
+const Categorey = require('../models/CategoreiesModel')
+
 exports.getUnApprovedPosts = async (req, res) => {
     try {
         const unApprovedPosts = await Post.find({ isApprovedByAdmin: false });
@@ -37,12 +40,9 @@ exports.MakeAPostApproved = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
-
-
-
 exports.getDashboardData = async (req, res) => {
     try {
-        const paymentsResponse = await axios.get('https://offer-website.onrender.com/api/v1/admin-all-payments');
+        const paymentsResponse = await axios.get('${process.env.BACKEND_URL}/api/v1/admin-all-payments');
         const payments = paymentsResponse.data.payments;
 
         // Calculate total amount of all payments
@@ -59,6 +59,8 @@ exports.getDashboardData = async (req, res) => {
         const totalFreeListing = await ListingUser.countDocuments({ ListingPlan: 'Free' });
         const totalGoldListing = await ListingUser.countDocuments({ ListingPlan: 'Gold' });
         const totalSilverListing = await ListingUser.countDocuments({ ListingPlan: 'Silver' });
+        const totalCityWeDeal  =  await City.countDocuments()
+        const totalCategoriesWeDeal  =  await Categorey.countDocuments()
 
         const totalPosts = totalApprovedPosts + totalUnapprovedPosts;
         const percentageUnapproved = ((totalUnapprovedPosts / totalPosts) * 100).toFixed(2);
@@ -76,6 +78,8 @@ exports.getDashboardData = async (req, res) => {
                 totalFreeListing,
                 totalGoldListing,
                 totalSilverListing,
+                totalCategoriesWeDeal,
+                totalCityWeDeal,
                 totalPaymentAmountRupees, // Total amount of all payments
             }
         };

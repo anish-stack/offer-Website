@@ -10,11 +10,12 @@ const PartnerDashboard = () => {
     const [filters, setFilters] = useState({ date: '', package: '', shopName: '' });
 
     const token = localStorage.getItem('B2bToken');
+    const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
     useEffect(() => {
         const handleFetchPartner = async () => {
             try {
-                const res = await axios.get("https://offer-website.onrender.com/api/v1/list-of-shop-user", {
+                const res = await axios.get(`${BackendUrl}/list-of-shop-user`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

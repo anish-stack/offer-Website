@@ -18,11 +18,12 @@ const EditPost = () => {
     const [error, setError] = useState(null);
     const [submitting, setSubmitting] = useState(false);
     const [imagePreviews, setImagePreviews] = useState([]); // State for image previews
+    const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const response = await axios.get(`https://offer-website.onrender.com/api/v1/My-Shop-Post`, {
+                const response = await axios.get(`${BackendUrl}/My-Shop-Post`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -123,7 +124,7 @@ const EditPost = () => {
         });
 
         try {
-            const response = await axios.put(`https://offer-website.onrender.com/api/v1/My-Shop-Edit-post/${id}`, formDataToSubmit, {
+            const response = await axios.put(`${BackendUrl}/My-Shop-Edit-post/${id}`, formDataToSubmit, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',

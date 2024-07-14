@@ -61,4 +61,4 @@ const ListingData = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('ListingData', ListingData);
+module.exports = mongoose.model('PostByShop', ListingData);

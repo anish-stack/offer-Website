@@ -9,9 +9,11 @@ const ShopDashboard = () => {
     const token = localStorage.getItem('ShopToken')
     const [shopDetails, setShopDetails] = useState()
     const [isCreateListingOpen, setIsCreateListingOpen] = useState(false);
+    const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
+
     const fetchMyShopDetails = async () => {
         try {
-            const response = await axios.get('https://offer-website.onrender.com/api/v1/My-Shop-Details', {
+            const response = await axios.get(`${BackendUrl}/My-Shop-Details`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -27,7 +29,7 @@ const ShopDashboard = () => {
     useEffect(() => {
         fetchMyShopDetails()
     }, [])
-    const handleUpgradePackage = (id) =>{
+    const handleUpgradePackage = (id) => {
         navigate(`/upgrade-package/${id}`)
     }
     return (
@@ -39,7 +41,7 @@ const ShopDashboard = () => {
                             <div className="col-span-4 sm:col-span-3">
                                 <div className="bg-white shadow rounded-lg p-6">
                                     <div className="flex flex-col items-center">
-                                        <img src={ShopImage} className="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0" /> 
+                                        <img src={ShopImage} className="w-32 h-32 bg-gray-300 rounded-full mb-4 shrink-0" />
 
                                         <h1 className="text-xl font-bold">{shopDetails ? shopDetails.ShopName || "N/A" : "N/A"}</h1>
                                         <p className="text-gray-700">{shopDetails ? shopDetails.ShopCategory || "N/A" : "N/A"}</p>
@@ -79,20 +81,20 @@ const ShopDashboard = () => {
                                                 <button onClick={() => handleUpgradePackage(shopDetails._id)} className="text-sm  px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50">
                                                     UPGRADE PACKAGE
                                                 </button>
-                                                
+
                                             </div>
                                             <div className="mb-2 m-auto">
-                                            <button
-                                                onClick={() => {
-                                                    localStorage.clear();
-                                                    window.location.href = "/Login";
-                                                }}
-                                                className="ml-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 rounded-2xl px-6 transition duration-300"
-                                            >
-                                                Logout
-                                            </button>
+                                                <button
+                                                    onClick={() => {
+                                                        localStorage.clear();
+                                                        window.location.href = "/Shop-login";
+                                                    }}
+                                                    className="ml-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 rounded-2xl px-6 transition duration-300"
+                                                >
+                                                    Logout
+                                                </button>
                                             </div>
-                                            
+
                                         </div>
                                     </div>
 
@@ -140,7 +142,7 @@ const ShopDashboard = () => {
                 </>
             )}
 
-            <CreateListing  isOpen={isCreateListingOpen} onClose={() => setIsCreateListingOpen(false)} />
+            <CreateListing isOpen={isCreateListingOpen} onClose={() => setIsCreateListingOpen(false)} />
         </div>
     )
 }

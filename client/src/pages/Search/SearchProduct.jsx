@@ -6,8 +6,10 @@ const SearchProduct = () => {
     const searchParams = new URLSearchParams(window.location.search);
     const city = searchParams.get('city');
     const pincode = searchParams.get('pincode');
-    const WhatYouWant = searchParams.get('WhatYouWant');
+    const WhatYouWant = searchParams.get('query');
     const shopCategory = searchParams.get('ShopCategory');
+    const searchType = searchParams.get('searchType');
+
 
     // State for search results, loading indicator, and pagination
     const [searchResults, setSearchResults] = useState([]);
@@ -22,25 +24,28 @@ const SearchProduct = () => {
         City: city,
         PinCode: pincode,
         WhatYouWant: WhatYouWant,
-        ShopCategory: shopCategory
+        ShopCategory: shopCategory,
+        searchType:searchType
     });
+    const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const response = await axios.post(`https://offer-website.onrender.com/api/v1/search`, {
+                const response = await axios.post(`${BackendUrl}/search`, {
                     formData,
                     filter // Pass filter as part of the request
                 });
-                const data = response.data.data; // Assuming response is an object with a 'data' property
-    
+
+                const data = response.data.listings; // Assuming response is an object with a 'listings' property
+
                 // Sort data based on HowMuchOfferPost in descending order
-                data.sort((a, b) => b.HowMuchOfferPost - a.HowMuchOfferPost);
-    
+                data.sort((a, b) => b.ShopDetails.HowMuchOfferPost - a.ShopDetails.HowMuchOfferPost);
+
                 // Filter out items where HowMuchOfferPost is 0
-                const filteredData = data.filter(item => item.HowMuchOfferPost !== 0);
-    
+                const filteredData = data.filter(item => item.ShopDetails.HowMuchOfferPost !== 0);
+
                 setSearchResults(filteredData);
                 setTotalPages(Math.ceil(filteredData.length / resultsPerPage)); // Calculate total pages
             } catch (error) {
@@ -48,10 +53,10 @@ const SearchProduct = () => {
             }
             setLoading(false);
         };
-    
+
         fetchData();
     }, [formData, filter]); // Trigger useEffect when formData or filter changes
-    
+
     // Pagination - Previous page
     const prevPage = () => {
         if (currentPage > 1) {
@@ -78,82 +83,53 @@ const SearchProduct = () => {
     const currentResults = searchResults.slice(indexOfFirstResult, indexOfLastResult);
 
     return (
-
         <>
             <div className="p-4 max-w-7xl mx-auto mt-9 mb-5 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {/* Filter buttons */}
 
-
                 {/* Search results */}
                 {loading ? (
-                   <div className='w-full min-h-screen flex items-center justify-center loading'><svg viewBox="25 25 50 50">
-                   <circle r="20" cy="50" cx="50"></circle>
-               </svg></div>
+                    <div className='w-full min-h-screen flex items-center justify-center loading'><svg viewBox="25 25 50 50">
+                        <circle r="20" cy="50" cx="50"></circle>
+                    </svg></div>
                 ) : currentResults.length > 0 ? (
                     <>
                         {currentResults.map((result, index) => (
                             <a
-                            href={`/View-More-Offers/Shop-profile/${result._id}/${result?.ShopName.replace(/\s+/g, '-') || "N/A"}`}
+                                href={`/View-More-Offers/Shop-profile/${result.ShopDetails._id}/${result?.ShopDetails.ShopName.replace(/\s+/g, '-') || "N/A"}`}
                                 key={index}
                                 className="border rounded-lg overflow-hidden shadow-lg animate__animated animate__fadeIn"
                             >
                                 <div className="relative">
-                                    {console.log(result)}
-
                                     <img
-                                        src={`https://via.placeholder.com/300x200`} // Placeholder image
-                                        alt={`Image for ${result.ShopName}`}
+                                        src={result?.Pictures[0]?.ImageUrl || `https://via.placeholder.com/300x200`} // Placeholder image if no pictures are available
+                                        alt={`Image for ${result.ShopDetails.ShopName}`}
                                         className="w-full h-48 object-cover"
                                     />
                                     <div className="absolute top-0 right-0 p-2 bg-white text-gray-700 rounded-bl-lg">
-                                        {result.ListingPlan}
+                                        {result.ShopDetails.ListingPlan}
                                     </div>
                                 </div>
                                 <div className="p-4">
-                                    <h3 className="text-lg font-bold mb-2">{result.ShopName}</h3>
+                                    <h3 className="text-lg font-bold mb-2">{result.ShopDetails.ShopName}</h3>
                                     <p className="text-gray-700 mb-2">
-                                        {result.ShopAddress.ShopAddressStreet}, {result.ShopAddress.NearByLandMark}
+                                        {result.ShopDetails.ShopAddress.ShopAddressStreet}, {result.ShopDetails.ShopAddress.NearByLandMark}
                                     </p>
-                                    <p className="text-gray-700 mb-2">PinCode: {result.ShopAddress.PinCode}</p>
-                                    <p className="text-gray-700 mb-2">Email: {result.Email}</p>
-                                    <p className="text-gray-700 mb-2">Contact Number: {result.ContactNumber}</p>
-                                    {/* <p className="text-gray-700 mb-2">
-                                        How Much Offer Post: {result.HowMuchOfferPost || '0'}
-                                    </p> */}
+                                    <p className="text-gray-700 mb-2">PinCode: {result.ShopDetails.ShopAddress.PinCode}</p>
+                                    <p className="text-gray-700 mb-2">Email: {result.ShopDetails.Email}</p>
+                                    <p className="text-gray-700 mb-2">Contact Number: {result.ShopDetails.ContactNumber}</p>
                                     <div>
-                                 
                                         <div>
-                                            {result.HowMuchOfferPost === 0 ? (
+                                            {result.ShopDetails.HowMuchOfferPost === 0 ? (
                                                 <p>No offer</p>
                                             ) : (
-                                                <p>Offer available: {result.HowMuchOfferPost || 0}</p>
+                                                <p>Offer available: {result.ShopDetails.HowMuchOfferPost || 0}</p>
                                             )}
                                         </div>
                                     </div>
-
-                                    {/* <div className="mt-4">
-                                        {result.HowMuchOfferPost !== undefined && result.HowMuchOfferPost !== 0 ? (
-                                            <a
-                                                href={`/View-More-Offers/Shop-profile/${result?._id}/${result?.ShopName.replace(/\s+/g, '-') || "N/A"}`}
-                                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300"
-                                            >
-                                                View Offers
-                                            </a>
-                                        ) : (
-                                            <button
-                                                className="bg-gray-300 text-gray-600 font-bold py-2 px-4 rounded-full cursor-not-allowed"
-                                                disabled
-                                            >
-                                                No Offers Available
-                                            </button>
-                                        )}
-                                    </div> */}
-
                                 </div>
                             </a>
                         ))}
-                        {/* Pagination controls */}
-
                     </>
                 ) : (
                     <p className="text-center">No data found.</p>
@@ -178,7 +154,6 @@ const SearchProduct = () => {
                 </button>
             </div>
         </>
-
     );
 };
 

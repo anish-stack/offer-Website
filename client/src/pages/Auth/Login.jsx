@@ -7,6 +7,7 @@ const Login = () => {
     PartnerEmail: "",
     Password: ""
   });
+  const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,7 +21,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('https://offer-website.onrender.com/api/v1/login', formData);
+      const response = await axios.post(`${BackendUrl}/login`, formData);
       // Assuming your server responds with some data upon successful login
       console.log('Login Successful:', response.data);
       const data = response.data.token

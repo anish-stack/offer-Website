@@ -4,9 +4,10 @@ import { toast } from 'react-hot-toast';
 
 const ShopLogin = () => {
   const [formData, setFormData] = useState({
-    UserName: "",
+    Email: "",
     Password: ""
   });
+  const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,7 +21,7 @@ const ShopLogin = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('https://offer-website.onrender.com/api/v1/login-shop-user', formData);
+      const response = await axios.post(`${BackendUrl}/login-shop-user`, formData);
       // Assuming your server responds with some data upon successful login
       // console.log('Login Successful:', response.data);
 
@@ -42,7 +43,7 @@ const ShopLogin = () => {
       }
 
       setFormData({
-        UserName: '',
+        Email: '',
         Password: ''
       });
 
@@ -72,16 +73,16 @@ const ShopLogin = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-              Username
+              Email
             </label>
             <div className="mt-2">
               <input
-                id="UserName"
-                name="UserName"
-                type="UserName"
-                autoComplete="UserName"
+                id="Email"
+                name="Email"
+                type="email"
+                autoComplete="Email"
                 required
-                value={formData.UserName}
+                value={formData.Email}
                 onChange={handleChange}
                 className="block px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />

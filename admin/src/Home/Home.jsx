@@ -11,6 +11,8 @@ import Payments from '../pages/dashboard/Payments';
 import AllPackages from '../pages/Packages/AllPackages';
 import CreatePackage from '../pages/Packages/CraetePackages';
 import DashboardScreen from '../pages/dashboard/DashboardScree';
+import AllCategories from '../pages/categories/AllCategories';
+import AllCity from '../pages/City/AllCity';
 
 
 const Home = () => {
@@ -18,13 +20,13 @@ const Home = () => {
 
   return (
     token ? (
-      <div className="w-full flex">
-        <div className="w-1/6 border-2">
+      <div className="w-full relative flex">
+        <div className="w-1/6  border-black ">
           <Sidebar />
         </div>
-        <div className="w-[83%] p-4">
+        <div className="w-[83%]  p-4">
           <Routes>
-          <Route path="/" element={<DashboardScreen />} />
+            <Route path="/" element={<DashboardScreen />} />
 
             <Route path="/card" element={<Card />} />
             <Route path="/All-shops" element={<AllShop />} />
@@ -35,6 +37,10 @@ const Home = () => {
             <Route path="/All-Packages" element={<AllPackages />} />
             <Route path="/All-Packages" element={<AllPackages />} />
             <Route path="/create-package" element={<CreatePackage />} />
+            <Route path="/All-categories" element={<AllCategories />} />
+            <Route path="/All-City" element={<AllCity />} />
+
+
 
 
 
