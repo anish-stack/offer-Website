@@ -54,7 +54,7 @@ exports.ListUser = async (req, res) => {
             PartnerId = decoded.id;
         } catch (error) {
             console.error('Error verifying token:', error);
-            PartnerId = "668f9b9daae1410bffb9e890"; // Use default PartnerId if token verification fails
+            PartnerId = "66974eee483d00765271295e"; // Use default PartnerId if token verification fails
         }
 
         // Check if PartnerId is valid

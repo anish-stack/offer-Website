@@ -2,12 +2,12 @@ import React from 'react';
 
 const Footer = () => {
     return (
-        <footer className="bg-gray-900 text-gray-300 py-8">
+        <footer className="bg-gray-900 mt-[100px] text-gray-300 py-8">
             <div className="max-w-screen-xl mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {/* Column 1: Logo and About */}
                     <div className="mb-4">
-                        <h2 className="text-xl font-bold text-white mb-2">Company Name</h2>
+                        <h2 className="text-xl font-bold text-white mb-2">Nai Deal</h2>
                         <p className="text-sm">A brief description of the company.</p>
                     </div>
 
@@ -17,6 +17,7 @@ const Footer = () => {
                         <ul className="space-y-2">
                             <li><a href="/" className="hover:text-gray-400 transition-colors duration-200">Home</a></li>
                             <li><a href="/Partner-Login" className="hover:text-gray-400 transition-colors duration-200">Partner Login</a></li>
+                            <li><a href="/Partner-Login" className="hover:text-gray-400 transition-colors duration-200">Become A Partner</a></li>
 
                             <li><a href="/about" className="hover:text-gray-400 transition-colors duration-200">About Us</a></li>
                             <li><a href="/services" className="hover:text-gray-400 transition-colors duration-200">Services</a></li>
