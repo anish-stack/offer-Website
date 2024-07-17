@@ -1,28 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom'; // Assuming you're using React Router for navigation
-import offer from './offer.png'
+import offer from './offer.png';
+
 const PostByCategories = () => {
     const [posts, setPosts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [postsPerPage] = useState(5); // Number of posts per page
     const query = new URLSearchParams(window.location.search);
-    const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL
+    const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
     const categoryName = query.get('Name');
+
     useEffect(() => {
         const fetchPosts = async () => {
             try {
                 const { data } = await axios.get(`${BackendUrl}/Post-by-categories/${categoryName}`);
                 setPosts(data);
-                console.log(data)// Assuming the API returns an array of posts
+                console.log(data); // Assuming the API returns an array of posts
             } catch (error) {
                 console.error('Error fetching posts:', error);
             }
         };
 
         fetchPosts();
-    }, []);
+    }, [BackendUrl, categoryName]); // Include BackendUrl and categoryName as dependencies
 
     // Pagination logic
     const indexOfLastPost = currentPage * postsPerPage;
@@ -42,18 +44,16 @@ const PostByCategories = () => {
                 </div>
             </div>
 
-
             {/* Display posts */}
-
             <div className="max-w-screen-xl py-2 mx-auto px-4">
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {currentPosts.length > 0 ? (
-                        currentPosts.map((post, index) => (
+                        currentPosts.map((post) => (
                             <div key={post._id} className="p-4 rounded-lg glass bg-white">
                                 <div className="relative overflow-hidden aspect-w-1 aspect-h-1 rounded-lg">
                                     <img
-                                        src={post.Items[0].dishImages[0].ImageUrl} // Assuming dishImages has only one image
-                                        alt={`Item Image`}
+                                        src={post.Items[0]?.dishImages[0]?.ImageUrl || placeholderImageUrl}
+                                        alt="Item Image"
                                         className="object-cover w-full md:h-64 h-full rounded-lg"
                                     />
                                     <div className="absolute top-2 left-2 bg-gradient-to-br from-yellow-400 to-red-500 text-white py-1 px-2 rounded-full text-sm font-semibold">
@@ -93,7 +93,6 @@ const PostByCategories = () => {
                 </div>
             </div>
         </div>
-
     );
 };
 
