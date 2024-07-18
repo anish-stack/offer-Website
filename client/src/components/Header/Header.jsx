@@ -130,9 +130,9 @@ const Header = ({ locationDetails }) => {
                         </div>
                     </div>
                     {activeTab === 'normal' && (
-                        <div className={`tab-search mb-5 grid grid-cols-1 gap-3 lg:grid-cols-3 md:grid-cols-3 max-w-7xl w-full mx-auto p-3`}>
-                            <div className='mb-4 py-6 w-full'>
-                                <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='city'>Select City</label>
+                        <div className={`tab-search mb-5 grid grid-cols-1 md:gap-3 lg:grid-cols-3 md:grid-cols-3 max-w-7xl w-full mx-auto p-3`}>
+                            <div className='md:mb-4 md:py-6 w-full'>
+                                <label className='block text-gray-700 text-sm font-bold md:mb-2' htmlFor='city'>Select City</label>
                                 <select id='city' className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline'>
                                     {locationDetails && locationDetails.city ? (
                                         <>
@@ -151,7 +151,7 @@ const Header = ({ locationDetails }) => {
 
 
 
-                            <div className='mb-4 py-6 w-full'>
+                            <div className='md:mb-4 py-6 w-full'>
                                 <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='search'>Type What You Want</label>
                                 <input
                                     id='search'
@@ -162,8 +162,8 @@ const Header = ({ locationDetails }) => {
                                     className='shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                                 />
                             </div>
-                            <div className='w-full py-6 block'>
-                                <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='advanced-search'>&nbsp;</label>
+                            <div className='w-full md:py-6 block'>
+                                <label className='block text-gray-700 text-sm font-bold' htmlFor='advanced-search'>&nbsp;</label>
 
                                 <button
                                     className='bg-blue-500 w-full text-white py-2 px-4 rounded-full shadow hover:bg-blue-600 transition-all duration-300'
@@ -175,8 +175,8 @@ const Header = ({ locationDetails }) => {
                         </div>
                     )}
                     {activeTab === 'advanced' && (
-                        <div className={`tab-search grid grid-cols-1 gap-3 md:grid-cols-4 lg:grid-cols-5 max-w-7xl mx-auto p-3`}>
-                            <div className='mb-4 py-6 w-full'>
+                        <div className={`tab-search grid grid-cols-1 md:gap-3 md:grid-cols-4 lg:grid-cols-5 max-w-7xl mx-auto p-3`}>
+                            <div className='md:mb-4 py-2 md:py-6 w-full'>
                                 <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='city'>Select City</label>
                                 <select id='city' className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline'>
                                     {locationDetails && locationDetails.city ? (
@@ -194,7 +194,7 @@ const Header = ({ locationDetails }) => {
                                 </select>
 
                             </div>
-                            <div className='mb-4 py-6 w-full'>
+                            <div className='md:mb-4 py-2 md:py-6 w-full'>
                                 <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='pincode'>Pincode</label>
                                 <input
                                     id='pincode'
@@ -206,7 +206,7 @@ const Header = ({ locationDetails }) => {
                                 />
                             </div>
 
-                            <div className='mb-4 py-6 w-full'>
+                            <div className='md:mb-4 py-2 md:py-6 w-full'>
                                 <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='category'>Select Categories</label>
                                 <select id='category' className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline'>
                                     {data && data.map((category, index) => (
@@ -214,7 +214,7 @@ const Header = ({ locationDetails }) => {
                                     ))}
                                 </select>
                             </div>
-                            <div className='mb-4 py-6 w-full'>
+                            <div className='md:mb-4 py-2 md:py-6 w-full'>
                                 <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='advanced-search'>Type What You Want</label>
                                 <input
                                     id='advanced-search'
@@ -225,7 +225,7 @@ const Header = ({ locationDetails }) => {
                                     className='shadow appearance-none border-black border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
                                 />
                             </div>
-                            <div className='w-full py-6 block'>
+                            <div className='w-full md:py-6 block'>
                                 <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='advanced-search'>&nbsp;</label>
 
                                 <button

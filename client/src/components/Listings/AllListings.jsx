@@ -69,15 +69,19 @@ const AllListings = () => {
                             className='bg-white relative overflow-hidden cursor-pointer rounded-lg shadow-md p-4'
                             key={index}
                         >
+
                             <img
                                 src={item.listing.Pictures[0]?.ImageUrl}
                                 alt={item.listing.Title}
                                 loading='lazy'
                                 className='w-full h-20 aspect-w-1 aspect-h-1 md:h-48 object-cover mb-4 rounded-lg'
                             />
-                            <div className="absolute top-2 left-2 bg-gradient-to-br from-yellow-400 to-red-500 text-white py-1 px-2 rounded-full text-sm font-semibold">
-                                {item.shopDetails.ListingPlan} Plan
-                            </div>
+                            {item.shopDetails.ListingPlan !== 'Free' && (
+                                <div className="absolute top-2 left-2 bg-gradient-to-br from-green-400 to-green-500 text-white py-1 px-5 rounded-full text-left text-sm font-semibold">
+                                    <i class="fa-solid fa-circle-check"></i>  Verified
+                                </div>
+                            )}
+
                             <p className='text-lg font-semibold mb-2'>{item.listing.Title}</p>
                             <p className="text-sm truncate text-gray-700 mb-2">
                                 {item.shopDetails ? (
