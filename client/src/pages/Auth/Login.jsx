@@ -49,7 +49,7 @@ const Login = () => {
           alt="Your Company"
         />
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Sign in to your account
+          Partner Login
         </h2>
       </div>
 
@@ -108,10 +108,10 @@ const Login = () => {
           </div>
         </form>
 
-        <p className="mt-10 text-center text-sm text-gray-500">
-          Not a member?{' '}
-          <a href="/User-register-by-Partner/7458" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-            Start Your First Post Free On Today
+        <p className="mt-10 text-2xl text-center  text-gray-500">
+          Not a Partner?{' '}
+          <a href="/Register-Partner?query=send-by-admin&registerdate=2024-07-17T12:53:20.737Z" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+            Become Our Partner
           </a>
         </p>
       </div>

@@ -56,8 +56,8 @@ const PostByCategories = () => {
                                         alt="Item Image"
                                         className="object-cover w-full md:h-64 h-full rounded-lg"
                                     />
-                                    <div className="absolute top-2 left-2 bg-gradient-to-br from-yellow-400 to-red-500 text-white py-1 px-2 rounded-full text-sm font-semibold">
-                                        {post.Plan} Plan
+                                    <div className="absolute top-2 left-2 bg-gradient-to-br from-green-400 to-green-500 text-white py-1 px-5 rounded-full text-left text-sm font-semibold">
+                                        <i class="fa-solid fa-circle-check"></i>  Verified
                                     </div>
                                 </div>
                                 <div className="mt-4">

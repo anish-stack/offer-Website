@@ -71,6 +71,8 @@ const OtpPage = () => {
       const res = await axios.post(`${BackendUrl}/verify-otp-register`, formData);
       console.log('OTP submitted:', res);
       toast.success('OTP verified successfully!');
+      window.location.href="/Partner-Dashboard"
+
       // Redirect to another page or handle success as needed
     } catch (error) {
       console.error('Error verifying OTP:', error);
@@ -87,7 +89,6 @@ const OtpPage = () => {
       const res = await axios.post(`${BackendUrl}/resend-otp-register`, { PartnerEmail: formData.PartnerEmail });
       console.log('OTP resent:', res);
       toast.success('OTP resent successfully!');
-      
       // Update URL query parameter
       const params = new URLSearchParams(location.search);
       params.set('resendOTP', 'true');

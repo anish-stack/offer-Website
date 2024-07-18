@@ -154,7 +154,7 @@ const CreateListing = ({ isOpen, onClose, fetchMyShopDetails }) => {
                     </div>
 
                     <div className="mb-1">
-                        <label className="block text-gray-700 font-medium mb-2">Add posters <span className="text-red-500">*</span></label>
+                        <label className="block text-gray-700 font-medium mb-2">Add posters [Upto 5 Pictures Please upload] <span className="text-red-500">*</span></label>
                         <input
                             type="file"
                             multiple

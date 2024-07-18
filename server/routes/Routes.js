@@ -53,7 +53,7 @@ router.get('/admin-post-un-approved', getUnApprovedPosts)
 router.put('/admin-approve-post/:id', MakeAPostApproved)
 router.put('/admin-update-shop/:id', updateDetailsOfListUser)
 router.get('/admin-all-partner', getAllPartner)
-router.post('/delete-partner', deletePartnerAccount);
+router.delete('/delete-partner/:id', deletePartnerAccount);
 router.get('/admin-by-partner-user/:id', GetAllShopListByPartnerAdmin);
 router.get('/admin-payments/:id', showPaymentDetails);
 router.get('/admin-all-payments', allPayments);

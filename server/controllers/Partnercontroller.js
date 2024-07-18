@@ -308,9 +308,9 @@ exports.logout = async (req, res) => {
 // Delete Partner Account
 exports.deletePartnerAccount = async (req, res) => {
     try {
-        const { PartnerEmail } = req.body;
-
-        const partner = await Partner.findOneAndDelete({ PartnerEmail });
+        const { id } = req.params;
+        console.log(id)
+        const partner = await Partner.findByIdAndDelete(id);
         if (!partner) {
             return res.status(400).json({ message: 'Partner not found' });
         }

@@ -22,7 +22,9 @@ const AllPartners = () => {
     };
     const handleDelete = async (id) => {
         try {
-            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/delete-partner/${id}`);
+            console.log("i am click",id)
+            const response = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/delete-partner/${id}`);
+            console.log(response.data)
             fetchPartners()
         } catch (error) {
             console.error('Error fetching partners:', error);

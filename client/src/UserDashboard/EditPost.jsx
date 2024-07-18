@@ -215,78 +215,126 @@ const EditPost = () => {
                             required
                         />
                         {/* Dish Images mapping */}
-                        {item.dishImages.map((dishImage, dishIndex) => (
-                            <div key={dishIndex} className="mt-4">
-                                <label className="block text-sm font-medium text-gray-700">Dish Image {dishIndex + 1}</label>
-                                <div className="flex items-center mt-1 space-x-4">
-                                    {/* Old image */}
-                                    <div className="grid grid-cols-2 gap-4">
-                                        {/* Display existing images */}
-                                        {dishImage.ImageUrl && (
-                                            <div className="flex items-center border p-2 rounded-md">
-                                                <div className="relative">
-                                                    <img
-                                                        src={dishImage.ImageUrl}
-                                                        alt={`Dish ${dishIndex + 1}`}
-                                                        className="w-32 h-32 object-contain object-center rounded"
-                                                    />
-                                                    <span className="absolute bottom-0 right-0 bg-gray-700 text-white text-xs px-1 py-0.5 rounded">
-                                                        Old
-                                                    </span>
+                        {item.dishImages && item.dishImages.length > 0 ? (
+                            item.dishImages.map((dishImage, dishIndex) => (
+                                <div key={dishIndex} className="mt-4">
+                                    <label className="block text-sm font-medium text-gray-700">Dish Image {dishIndex + 1}</label>
+                                    <div className="flex items-center mt-1 space-x-4">
+                                        {/* Old image */}
+                                        <div className="grid grid-cols-2 gap-4">
+                                            {/* Display existing images */}
+                                            {dishImage.ImageUrl && (
+                                                <div className="flex items-center border p-2 rounded-md">
+                                                    <div className="relative">
+                                                        <img
+                                                            src={dishImage.ImageUrl}
+                                                            alt={`Dish ${dishIndex + 1}`}
+                                                            className="w-32 h-32 object-contain object-center rounded"
+                                                        />
+                                                        <span className="absolute bottom-0 right-0 bg-gray-700 text-white text-xs px-1 py-0.5 rounded">
+                                                            Old
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                                {/* <p className="text-xs ml-2">{dishImage.public_id}</p> */}
-                                            </div>
-                                        )}
+                                            )}
 
-                                        {/* Display new image previews */}
-                                        {imagePreviews[itemIndex * 10 + dishIndex] && (
-                                            <div className="border p-2 rounded-md">
-                                                <div className="relative">
-                                                    <img
-                                                        src={imagePreviews[itemIndex * 10 + dishIndex]}
-                                                        alt={`Dish ${dishIndex + 1}`}
-                                                        className="w-32 h-32  object-contain object-center rounded"
-                                                    />
-                                                    <span className="absolute bottom-0 right-0 bg-indigo-600 text-white text-xs px-1 py-0.5 rounded">
-                                                        New
-                                                    </span>
+                                            {/* Display new image previews */}
+                                            {imagePreviews[itemIndex * 10 + dishIndex] && (
+                                                <div className="flex items-center border p-2 rounded-md">
+                                                    <div className="relative">
+                                                        <img
+                                                            src={imagePreviews[itemIndex * 10 + dishIndex]}
+                                                            alt={`Dish ${dishIndex + 1} New`}
+                                                            className="w-32 h-32 object-contain object-center rounded"
+                                                        />
+                                                        <span className="absolute bottom-0 right-0 bg-gray-700 text-white text-xs px-1 py-0.5 rounded">
+                                                            New
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        )}
+                                            )}
+                                        </div>
+
+                                        <input
+                                            type="file"
+                                            onChange={(e) => handleDishImageChange(itemIndex, dishIndex, e)}
+                                            className="ml-4"
+                                        />
                                     </div>
-
-
-                                    {/* Image upload */}
-                                    <input
-                                        type="file"
-                                        name={`dishImage${itemIndex}_${dishIndex}`}
-                                        onChange={(e) => handleDishImageChange(itemIndex, dishIndex, e)}
-                                        className="ml-2 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                    />
                                 </div>
+                            ))
+                        ) : (
+                            <div className="mt-4">
+                                <label className="block text-sm font-medium text-gray-700">Upload Dish Images</label>
+                                <input
+                                    type="file"
+                                    onChange={(e) => handleDishImageChange(itemIndex, 0, e)}
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    required
+                                />
                             </div>
-                        ))}
+                        )}
                     </div>
                 ))}
 
-                {/* Update button */}
+                {/* Images */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Upload Images</label>
+                    <div className="flex items-center mt-1 space-x-4">
+                        {images && images.map((image, index) => (
+                            <div key={index} className="grid grid-cols-2 gap-4">
+                                {/* Display existing images */}
+                                {image.ImageUrl && (
+                                    <div className="flex items-center border p-2 rounded-md">
+                                        <div className="relative">
+                                            <img
+                                                src={image.ImageUrl}
+                                                alt={`Image ${index + 1}`}
+                                                className="w-32 h-32 object-contain object-center rounded"
+                                            />
+                                            <span className="absolute bottom-0 right-0 bg-gray-700 text-white text-xs px-1 py-0.5 rounded">
+                                                Old
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Display new image previews */}
+                                {imagePreviews[index] && (
+                                    <div className="flex items-center border p-2 rounded-md">
+                                        <div className="relative">
+                                            <img
+                                                src={imagePreviews[index]}
+                                                alt={`Image ${index + 1} New`}
+                                                className="w-32 h-32 object-contain object-center rounded"
+                                            />
+                                            <span className="absolute bottom-0 right-0 bg-gray-700 text-white text-xs px-1 py-0.5 rounded">
+                                                New
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                                <input
+                                    type="file"
+                                    onChange={(e) => handleImageChange(index, e)}
+                                    className="ml-4"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Submit button */}
                 <div className="mt-4">
                     <button
                         type="submit"
-                        className={`w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${submitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`px-4 py-2 rounded ${submitting ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-700'} text-white`}
                         disabled={submitting}
                     >
                         {submitting ? 'Updating...' : 'Update Post'}
                     </button>
                 </div>
             </form>
-
-            {/* Loader component */}
-            {submitting && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
-                    <div className="loader"></div> {/* Replace with your loader component or style */}
-                </div>
-            )}
         </div>
     );
 };

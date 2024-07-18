@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios'
 const Header = ({ locationDetails }) => {
     const [showMenu, setShowMenu] = useState(false);
@@ -39,7 +39,18 @@ const Header = ({ locationDetails }) => {
         fetchCity()
     }, [])
 
-
+    const location = useLocation()
+    const [showTabs, setShowTabs] = useState()
+    const handleShowTabs = () => {
+        if (location.pathname === "/") {
+            setShowTabs(true)
+        } else {
+            setShowTabs(false)
+        }
+    }
+    useEffect(() => {
+        handleShowTabs()
+    }, [location.pathname])
     const handleSearch = () => {
         if (activeTab === 'normal') {
             const query = `?query=${searchInput}&city=${document.getElementById('city').value}&searchType=${activeTab}`;
@@ -60,7 +71,7 @@ const Header = ({ locationDetails }) => {
 
     return (
         <div className='w-full shadow-md'>
-            <div className='max-w-[1400px] flex items-center justify-between mx-auto px-3 py-3'>
+            <div className='max-w-[1400px] flex items-center justify-between mx-auto px-3 py-4'>
                 <div className="logo p-2">
                     <Link to={'/'} className='text-xl font-extrabold text-slate-900 md:text-2xl'>
                         Nai <span className='text-green-400'>Deal</span>
@@ -94,145 +105,141 @@ const Header = ({ locationDetails }) => {
                     </div>
                 </nav>
             </div>
-            <hr className='border-[0.5px] border-black max-w-[1400px] mx-auto bg-black' />
-            <div className='tabs max-w-4xl mx-auto flex items-center justify-between p-3'>
-                <div onDoubleClick={() => setActiveTab('')}>
-                    <button
-                        className={`bg-blue-500 text-white py-2 px-4 rounded-full shadow hover:bg-blue-600 transition-all duration-300 ${activeTab === 'normal' ? 'ring-2 ring-blue-300' : ''}`}
-                        onClick={() => setActiveTab('normal')}
+            {showTabs ? (
+                <>
+                    <hr className='border-[0.5px] border-black max-w-[1400px] mx-auto bg-black' />
 
-                    >
-                        Search <i className="fas fa-search ml-3 fa-lg"></i>
-                    </button>
-                </div>
-                <div onDoubleClick={() => setActiveTab('')}>
-                    <button
-                        className={`bg-green-500 text-white py-2 px-4 rounded-full shadow hover:bg-green-600 transition-all duration-300 ${activeTab === 'advanced' ? 'ring-2 ring-green-300' : ''}`}
-                        onClick={() => setActiveTab('advanced')}
+                    <div className='tabs w-full  mt-9 mx-auto flex items-center justify-around p-3'>
+                        <div className='w-1/3' onDoubleClick={() => setActiveTab('')}>
+                            <button
+                                className={`bg-blue-500 text-white w-full  py-2 px-4 rounded-full shadow hover:bg-blue-600 transition-all duration-300 ${activeTab === 'normal' ? 'ring-2 ring-blue-300' : ''}`}
+                                onClick={() => setActiveTab('normal')}
 
-                    >
-                        Advanced Search <i className="fa-brands fa-lg ml-3 fa-searchengin"></i>
-                    </button>
-                </div>
-            </div>
-            {activeTab === 'normal' && (
-                <div className={`tab-search grid grid-cols-1 gap-3 lg:grid-cols-3 md:grid-cols-3 max-w-5xl w-full mx-auto p-3`}>
-                    <div className='mb-4 w-full'>
-                        <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='city'>Select City</label>
-                        <select id='city' className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline'>
-                            {locationDetails && locationDetails.city ? (
-                                <>
-                                    <option value={locationDetails.city}>{locationDetails.city}</option>
-                                    {city && city.map((city, index) => (
-                                        <option key={index} value={city.cityName}>{city.cityName}</option>
+                            >
+                                Search <i className="fas fa-search ml-3 fa-lg"></i>
+                            </button>
+                        </div>
+                        <div className='w-1/3' onDoubleClick={() => setActiveTab('')}>
+                            <button
+                                className={`bg-green-500 text-white  w-full py-2 px-4 rounded-full shadow hover:bg-green-600 transition-all duration-300 ${activeTab === 'advanced' ? 'ring-2 ring-green-300' : ''}`}
+                                onClick={() => setActiveTab('advanced')}
+
+                            >
+                                Advanced Search <i className="fa-brands fa-lg ml-3 fa-searchengin"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {activeTab === 'normal' && (
+                        <div className={`tab-search mb-5 grid grid-cols-1 gap-3 lg:grid-cols-3 md:grid-cols-3 max-w-7xl w-full mx-auto p-3`}>
+                            <div className='mb-4 py-6 w-full'>
+                                <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='city'>Select City</label>
+                                <select id='city' className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline'>
+                                    {locationDetails && locationDetails.city ? (
+                                        <>
+                                            <option value={locationDetails.city}>{locationDetails.city}</option>
+                                            {city && city.map((city, index) => (
+                                                <option key={index} value={city.cityName}>{city.cityName}</option>
+                                            ))}
+                                        </>
+                                    ) : (
+                                        city && city.map((city, index) => (
+                                            <option key={index} value={city.cityName}>{city.cityName}</option>
+                                        ))
+                                    )}
+                                </select>
+                            </div>
+
+
+
+                            <div className='mb-4 py-6 w-full'>
+                                <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='search'>Type What You Want</label>
+                                <input
+                                    id='search'
+                                    type='text'
+                                    value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
+                                    onKeyPress={handleKeyPress}
+                                    className='shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                                />
+                            </div>
+                            <div className='w-full py-6 block'>
+                                <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='advanced-search'>&nbsp;</label>
+
+                                <button
+                                    className='bg-blue-500 w-full text-white py-2 px-4 rounded-full shadow hover:bg-blue-600 transition-all duration-300'
+                                    onClick={handleSearch}
+                                >
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                    {activeTab === 'advanced' && (
+                        <div className={`tab-search grid grid-cols-1 gap-3 md:grid-cols-4 lg:grid-cols-5 max-w-7xl mx-auto p-3`}>
+                            <div className='mb-4 py-6 w-full'>
+                                <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='city'>Select City</label>
+                                <select id='city' className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline'>
+                                    {locationDetails && locationDetails.city ? (
+                                        <>
+                                            <option value={locationDetails.city}>{locationDetails.city}</option>
+                                            {city && city.map((city, index) => (
+                                                <option key={index} value={city.cityName}>{city.cityName}</option>
+                                            ))}
+                                        </>
+                                    ) : (
+                                        city && city.map((city, index) => (
+                                            <option key={index} value={city.cityName}>{city.cityName}</option>
+                                        ))
+                                    )}
+                                </select>
+
+                            </div>
+                            <div className='mb-4 py-6 w-full'>
+                                <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='pincode'>Pincode</label>
+                                <input
+                                    id='pincode'
+                                    type='text'
+                                    value={pincodeInput}
+                                    onChange={(e) => setPincodeInput(e.target.value)}
+                                    onKeyPress={handleKeyPress}
+                                    className='shadow appearance-none border rounded border-black w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                                />
+                            </div>
+
+                            <div className='mb-4 py-6 w-full'>
+                                <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='category'>Select Categories</label>
+                                <select id='category' className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline'>
+                                    {data && data.map((category, index) => (
+                                        <option key={index} value={category.CategoriesName}>{category.CategoriesName}</option>
                                     ))}
-                                </>
-                            ) : (
-                                city && city.map((city, index) => (
-                                    <option key={index} value={city.cityName}>{city.cityName}</option>
-                                ))
-                            )}
-                        </select>
-                    </div>
-                    {/* <div className='mb-4 w-full'>
-                        <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='pincode'>Pincode</label>
-                        <input
-                            id='pincode'
-                            type='text'
-                            value={pincodeInput}
-                            onChange={(e) => setPincodeInput(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                        />
-                    </div> */}
+                                </select>
+                            </div>
+                            <div className='mb-4 py-6 w-full'>
+                                <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='advanced-search'>Type What You Want</label>
+                                <input
+                                    id='advanced-search'
+                                    type='text'
+                                    value={advancedSearchInput}
+                                    onChange={(e) => setAdvancedSearchInput(e.target.value)}
+                                    onKeyPress={handleKeyPress}
+                                    className='shadow appearance-none border-black border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                                />
+                            </div>
+                            <div className='w-full py-6 block'>
+                                <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='advanced-search'>&nbsp;</label>
 
+                                <button
+                                    className='bg-green-500 w-full text-white py-2 px-4 rounded-full shadow hover:bg-green-600 transition-all duration-300'
+                                    onClick={handleSearch}
+                                >
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </>
+            ) : (null)}
 
-                    <div className='mb-4 w-full'>
-                        <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='search'>Type What You Want</label>
-                        <input
-                            id='search'
-                            type='text'
-                            value={searchInput}
-                            onChange={(e) => setSearchInput(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                        />
-                    </div>
-                    <div className='w-full block'>
-                        <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='advanced-search'>&nbsp;</label>
-
-                        <button
-                            className='bg-blue-500 w-full text-white py-2 px-4 rounded-full shadow hover:bg-blue-600 transition-all duration-300'
-                            onClick={handleSearch}
-                        >
-                            Search
-                        </button>
-                    </div>
-                </div>
-            )}
-            {activeTab === 'advanced' && (
-                <div className={`tab-search grid grid-cols-1 gap-3 md:grid-cols-4 lg:grid-cols-5 max-w-5xl mx-auto p-3`}>
-                    <div className='mb-4 w-full'>
-                        <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='city'>Select City</label>
-                        <select id='city' className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline'>
-                            {locationDetails && locationDetails.city ? (
-                                <>
-                                    <option value={locationDetails.city}>{locationDetails.city}</option>
-                                    {city && city.map((city, index) => (
-                                        <option key={index} value={city.cityName}>{city.cityName}</option>
-                                    ))}
-                                </>
-                            ) : (
-                                city && city.map((city, index) => (
-                                    <option key={index} value={city.cityName}>{city.cityName}</option>
-                                ))
-                            )}
-                        </select>
-
-                    </div>
-                    <div className='mb-4 w-full'>
-                        <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='pincode'>Pincode</label>
-                        <input
-                            id='pincode'
-                            type='text'
-                            value={pincodeInput}
-                            onChange={(e) => setPincodeInput(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                        />
-                    </div>
-
-                    <div className='mb-4 w-full'>
-                        <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='category'>Select Categories</label>
-                        <select id='category' className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline'>
-                            {data && data.map((category, index) => (
-                                <option key={index} value={category.CategoriesName}>{category.CategoriesName}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className='mb-4 w-full'>
-                        <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='advanced-search'>Type What You Want</label>
-                        <input
-                            id='advanced-search'
-                            type='text'
-                            value={advancedSearchInput}
-                            onChange={(e) => setAdvancedSearchInput(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                            className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                        />
-                    </div>
-                    <div className='w-full block'>
-                        <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor='advanced-search'>&nbsp;</label>
-
-                        <button
-                            className='bg-green-500 w-full text-white py-2 px-4 rounded-full shadow hover:bg-green-600 transition-all duration-300'
-                            onClick={handleSearch}
-                        >
-                            Search
-                        </button>
-                    </div>
-                </div>
-            )}
             {showMenu && (
                 <ul className={`md:hidden absolute menu flex flex-col items-center gap-3 ${showMenu ? 'show' : ''}`}>
                     <li><Link className='text-slate-900 font-bold text-lg' to={'/Advertise-With-us'}>Advertise</Link></li>
