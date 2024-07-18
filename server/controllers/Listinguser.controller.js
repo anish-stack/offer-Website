@@ -54,7 +54,8 @@ exports.ListUser = async (req, res) => {
             PartnerId = decoded.id;
         } catch (error) {
             console.error('Error verifying token:', error);
-            PartnerId = "66974eee483d00765271295e"; // Use default PartnerId if token verification fails
+            // 6698adeb76077a48d454e5eb
+            PartnerId = process.env.PARTNER_ID; // Use default PartnerId if token verification fails
         }
 
         // Check if PartnerId is valid
@@ -196,7 +197,7 @@ exports.LoginListUser = async (req, res) => {
     try {
         // console.log(req.body);
         const { Email, UserName, Password } = req.body;
-        
+
         // Find user by Email or UserName
         let user;
         if (UserName) {
